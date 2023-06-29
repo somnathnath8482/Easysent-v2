@@ -65,10 +65,6 @@
     </style>
 
 
-    <style name="splash" parent="Theme.Easysentv2">
-        <item name="android:windowBackground">@drawable/splash</item>
-    </style>
-
     <style name="bottom_threedot">
         <item name="tint">@color/white</item>
 

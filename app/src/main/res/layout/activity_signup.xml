@@ -116,21 +116,28 @@
                 android:hint="@string/conform_password"
                 android:paddingStart="@dimen/_7sdp"
                 android:textColorHint="@color/gray_white" />
-
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp">
-
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_height="wrap_content">
                 <CheckBox
                     android:id="@+id/accept"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:buttonTint="@color/thim_color"
-                    android:paddingStart="@dimen/_5sdp"
-                    android:text="@string/accepTc"/>
-
+                    />
+                <TextView
+                    android:id="@+id/tv_accep"
+                    android:layout_toRightOf="@id/accept"
+                    style="@style/desc"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    android:layout_width="wrap_content"
+                    android:text="@string/accepTc"
+                    android:layout_height="wrap_content"
+                    />
 
             </RelativeLayout>
 

@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "easysent.in"
-        minSdk 21
+        minSdk 23
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -25,6 +25,12 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    viewBinding {
+        enabled = true
+    }
+    buildFeatures {
+        viewBinding true
     }
 }
 
@@ -54,4 +60,38 @@ def activity_version = "1.7.2"
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     //stylable toast
     implementation 'io.github.muddz:styleabletoast:2.4.0'
+
+    //networking
+
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+    implementation 'com.google.code.gson:gson:2.9.1'
+
+
+    //Cashing
+
+    //live data
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+    annotationProcessor 'android.arch.lifecycle:common-java8:1.1.1'
+//room
+    def room_version = "2.5.2"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    def paging_version = "3.1.1"
+    implementation "androidx.paging:paging-runtime:$paging_version"
+    implementation "androidx.room:room-paging:$room_version"
+    // optional - RxJava3 support
+    implementation "androidx.paging:paging-rxjava3:$paging_version"
+    def work_version = "2.7.1"
+
+    //lottie
+
+    implementation 'com.airbnb.android:lottie:4.0.0'
+    implementation 'com.github.mayuce:LottieAlertDialog:1.1'
+
+    //glide
+    implementation 'com.github.bumptech.glide:glide:4.15.1'
 }
