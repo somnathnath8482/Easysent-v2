@@ -58,8 +58,7 @@
                 android:paddingStart="@dimen/_7sdp"
                 android:paddingEnd="@dimen/_50sdp"
                 android:textColorHint="@color/gray_white"
-                android:autofillHints="username"
-                android:inputType="text" />
+               />
 
             <EditText
                 android:id="@+id/ed_password"
@@ -71,8 +70,7 @@
                 android:paddingStart="@dimen/_7sdp"
                 android:paddingEnd="@dimen/_50sdp"
                 android:textColorHint="@color/gray_white"
-                android:autofillHints="password"
-                android:inputType="textPassword" />
+               />
 
             <RelativeLayout
                 android:id="@+id/btn_login"
