@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:background="@color/thim_color"
-    tools:context=".LoginActivity">
+    tools:context=".Activity.LoginActivity">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -16,8 +16,6 @@
             android:layout_centerHorizontal="true"
             android:src="@drawable/splash"
             android:layout_marginTop="@dimen/_30sdp"
-
-
             android:contentDescription="@string/app_name" />
 
         <LinearLayout
@@ -34,9 +32,9 @@
 
             <TextView
                 style="@style/TextHeding"
-                android:layout_marginTop="@dimen/_10sdp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:text="@string/login" />
 
             <TextView
@@ -47,7 +45,6 @@
                 android:textSize="@dimen/_11sdp"
                 android:layout_marginVertical="@dimen/_5sdp"
                 android:text="@string/or_join_easysent"
-                android:fontFamily="@font/b612_bold"
                 android:textColor="@color/thim_color"
                 android:textStyle="bold"/>
 
@@ -99,7 +96,6 @@
                 android:text="@string/forgot_password"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:gravity="end"
-                android:fontFamily="@font/b612_bold"
                 android:textStyle="bold"
                 android:textSize="@dimen/_11sdp"
                 android:textColor="@color/thim_color"
@@ -124,12 +120,12 @@
 
                 <TextView
                     style="@style/TextHeding3"
-                    android:textSize="@dimen/_12sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="Register"
-                    android:textStyle="bold" />
+                    android:text="@string/register"
+                    android:textSize="@dimen/_12sdp"
+                />
             </RelativeLayout>
 
 
