@@ -1,0 +1,57 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'easysent.in'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "easysent.in"
+        minSdk 21
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
+            because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0") {
+            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+        }
+    }
+def activity_version = "1.7.2"
+
+    // Java language implementation
+    implementation "androidx.activity:activity:$activity_version"
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+
+    //detect the memory leaks
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.11'
+    //splash screen
+    implementation "androidx.core:core-splashscreen:1.0.1"
+    //density pixel size
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    //stylable toast
+    implementation 'io.github.muddz:styleabletoast:2.4.0'
+}
