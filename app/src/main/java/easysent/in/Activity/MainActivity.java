@@ -7,6 +7,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.app.Activity;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,6 +21,7 @@ import java.net.ServerSocket;
 import easysent.in.BuildConfig;
 import easysent.in.Helper.Constants;
 import easysent.in.Helper.MethodClass;
+import easysent.in.Helper.SyncData;
 import easysent.in.R;
 import easysent.in.databinding.ActivityMainBinding;
 import easysent.in.databinding.LeftMenuBinding;
@@ -30,10 +32,11 @@ public class MainActivity extends AppCompatActivity {
     Handler handler = new Handler();
     private NavOptions options;
     private NavController navController;
-
+Activity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity = this;
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View header_view = binding.navigationView.getHeaderView(0);
         leftMenuBinding = LeftMenuBinding.bind(header_view);
@@ -42,6 +45,18 @@ public class MainActivity extends AppCompatActivity {
         Init();
         DrawaerClick();
 
+        if (getIntent()!=null && getIntent().getBooleanExtra("new_login", false)){
+            Syc();
+        }
+
+    }
+
+    private void Syc() {
+        SyncData.SyncThread(activity.getApplication(),handler);
+        SyncData.SyncGroups(activity.getApplication(),handler);
+        SyncData.SyncChat(activity.getApplication(),handler);
+        SyncData.SyncBlock(activity.getApplication(),handler);
+        SyncData.SyncAllGroupChats(activity.getApplication(),handler);
     }
 
     private void DrawaerClick() {
@@ -52,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             binding.drawer.closeDrawer(GravityCompat.START);
             MethodClass.logout(MainActivity.this, handler);
         });
-      /*  leftMenuBinding.layEditProfile.setOnClickListener(view -> {
+        leftMenuBinding.layEditProfile.setOnClickListener(view -> {
             binding.drawer.closeDrawer(GravityCompat.START);
             navController.navigate(R.id.editProfileFragment, null, options);
         });
@@ -68,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         leftMenuBinding.layClip.setOnClickListener(view -> {
             binding.drawer.closeDrawer(GravityCompat.START);
             navController.navigate(R.id.clipsFragment, null, options);
-        });*/
+        });
     }
 
     private void Init() {

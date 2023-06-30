@@ -1,0 +1,26 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/MainBgCard"
+    tools:context="easysent.in.Fragments.ClipsFragment">
+<androidx.viewpager2.widget.ViewPager2
+    android:id="@+id/recycler"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+ android:layout_centerInParent="true"
+    android:orientation="vertical"
+ />
+ <de.hdodenhof.circleimageview.CircleImageView
+     android:id="@+id/btn_add"
+     android:layout_width="@dimen/_40sdp"
+     android:layout_height="@dimen/_40sdp"
+     android:layout_alignParentBottom="true"
+     android:layout_alignParentRight="true"
+     android:layout_marginEnd="@dimen/_20sdp"
+     android:layout_marginBottom="@dimen/_20sdp"
+     android:src="@drawable/ic_baseline_add_24"
+     android:background="@drawable/rounded_border_5"
+     />
+
+</RelativeLayout>

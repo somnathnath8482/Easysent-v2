@@ -6,6 +6,7 @@ import static easysent.in.Helper.Constants.GET_ALL_CHATS_BY_THREAD;
 import static easysent.in.Helper.Constants.GET_ALL_GROUP_MESSAGE;
 import static easysent.in.Helper.Constants.GET_ALL_THREAD;
 import static easysent.in.Helper.Constants.GET_ALL_USER;
+import static easysent.in.Helper.Constants.GET_BLOCK_USER;
 import static easysent.in.Helper.Constants.GET_MESSAGE_By_GROUP;
 import static easysent.in.Helper.Constants.Get_group;
 import static easysent.in.Helper.Constants.UPDATE_BY_SQL;
@@ -24,10 +25,15 @@ import easysent.in.Response.AllUsers.AllUsersResponse;
 import easysent.in.Response.AllUsers.UsersItem;
 import easysent.in.Response.Chats_By_Thread.AllChatResponse;
 import easysent.in.Response.Chats_By_Thread.ChatsItem;
+import easysent.in.Response.GetAllBlocks.AllBlockResponse;
+import easysent.in.Response.GetAllBlocks.Block_item;
 import easysent.in.Response.GetGroups.GetgroupsResponse;
 import easysent.in.Response.GetGroups.GroupsItem;
 import easysent.in.Response.GroupChats.GetGroupChatsResponse;
 import easysent.in.Response.GroupChats.MessagesItem;
+import easysent.in.Response.Login.User;
+import easysent.in.Room.Block.Block;
+import easysent.in.Room.Block.BlockViewModel;
 import easysent.in.Room.GroupChat.Group_Chat;
 import easysent.in.Room.GroupChat.Groups_chat_ViewModel;
 import easysent.in.Room.Groups.Groups;
@@ -39,6 +45,7 @@ import easysent.in.Room.Threads.Thread_ViewModel;
 import easysent.in.Room.Users.UserVewModel;
 import easysent.in.Room.Users.Users;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import org.json.JSONObject;
 
@@ -162,7 +169,36 @@ public class SyncData {
         }).start();
 
     }
+    public static void SyncBlock(Application activity, Handler handler) {
+        User user = PreferenceFile.getUser().getUser();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("id", user.getId());
 
+
+        MethodClass.CallHeader2(new Response() {
+            @Override
+            public void onResponse(JSONObject res) {
+
+                try {
+                    if (res != null) {
+                        BlockViewModel blockViewModel = new BlockViewModel(activity);
+                        blockViewModel.deleteAll();
+                        Gson gson = new Gson();
+                        AllBlockResponse response = gson.fromJson(res.toString(), AllBlockResponse.class);
+                        for (Block_item item : response.getblocks()) {
+                            Block block = new Block(item.getToUser(), item.getId(), item.getThread(), item.getFromUser());
+                            blockViewModel.insert(block);
+                        }
+
+                    }
+                } catch (JsonSyntaxException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, BASE_URL + GET_BLOCK_USER, activity, handler, user.getEmail(), map);
+
+    }
     public static void SyncAllGroupChats(Application application, Handler handler) {
         String id = PreferenceFile.getUser().getUser().getId();
 

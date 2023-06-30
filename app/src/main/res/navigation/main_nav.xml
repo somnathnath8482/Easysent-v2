@@ -10,4 +10,34 @@
         android:name="easysent.in.Fragments.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" />
+    <fragment
+        android:id="@+id/chengePasswordFragment"
+        android:name="easysent.in.Fragments.ChengePasswordFragment"
+        android:label="fragment_chenge_password"
+        tools:layout="@layout/fragment_chenge_password" />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="easysent.in.Fragments.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
+    <fragment
+        android:id="@+id/clipsFragment"
+        android:name="easysent.in.Fragments.ClipsFragment"
+        android:label="fragment_clips"
+        tools:layout="@layout/fragment_clips" />
+    <fragment
+        android:id="@+id/settengsFragment"
+        android:name="easysent.in.Fragments.SettengsFragment"
+        android:label="fragment_settengs"
+        tools:layout="@layout/fragment_settengs" />
+    <fragment
+        android:id="@+id/add_Clip_Fragment"
+        android:name="easysent.in.Fragments.Add_Clip_Fragment"
+        android:label="fragment_add__clip_"
+        tools:layout="@layout/fragment_add__clip_" />
+    <activity
+        android:id="@+id/setPasswordActivity"
+        android:name="easysent.in.Activity.SetPasswordActivity"
+        android:label="activity_set_password"
+        tools:layout="@layout/activity_set_password" />
 </navigation>

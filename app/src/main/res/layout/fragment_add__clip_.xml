@@ -1,0 +1,116 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/MainBgCard"
+    android:fillViewport="true"
+    tools:context="easysent.in.Fragments.Add_Clip_Fragment">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/header"
+        style="@style/Textdesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:text="Add/Upload Video" />
+    <LinearLayout
+        android:layout_below="@id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_5sdp"
+        android:orientation="horizontal">
+        <View
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_2sdp"
+            android:background="@color/thim_color"
+            />  <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_2sdp"
+        android:background="@color/gray_line"
+        />
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/lay_add"
+        android:layout_below="@id/header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_180sdp"
+        android:layout_marginHorizontal="@dimen/_20sdp"
+        android:layout_marginVertical="@dimen/_15sdp"
+        android:background="@drawable/curved_border_dotted"
+        >
+        <ImageView
+            android:id="@+id/iv_add_video"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+          android:layout_centerInParent="true"
+            android:src="@drawable/ic_video"
+            />
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_add_video"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="@string/click_to_add_video"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            style="@style/desc"
+            />
+    </RelativeLayout>
+
+    <VideoView
+        android:visibility="gone"
+        android:id="@+id/video"
+        android:layout_width="match_parent"
+        android:layout_above="@id/btn_submit"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lay_add"
+        />
+    <ImageView
+        android:id="@+id/cross"
+        android:visibility="gone"
+        android:layout_below="@id/lay_add"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:src="@drawable/ic_x"
+        />
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/prograss"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        />
+    <RelativeLayout
+     android:layout_alignParentBottom="true"
+        android:id="@+id/btn_submit"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_marginBottom="@dimen/_20sdp"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:background="@drawable/button_bacground">
+
+        <TextView
+            style="@style/Textdesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/update"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+</RelativeLayout>
+
+</ScrollView>

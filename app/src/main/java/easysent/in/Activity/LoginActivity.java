@@ -5,6 +5,7 @@ import static easysent.in.Helper.Constants.FIREBASE_TOKEN;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import easysent.in.Helper.Constants;
 import easysent.in.Helper.MethodClass;
 import easysent.in.Helper.SharePref.PreferenceFile;
+import easysent.in.Helper.SyncData;
 import easysent.in.Interface.Response;
 import easysent.in.R;
 import easysent.in.Response.Login.LoginResponse;
@@ -32,10 +34,12 @@ import io.github.muddz.styleabletoast.StyleableToast;
 public class LoginActivity extends AppCompatActivity {
 ActivityLoginBinding binding;
 Handler handler  = new Handler();
+Activity activity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SplashScreen.installSplashScreen(this);
+        activity = this;
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         Init();
@@ -97,8 +101,11 @@ Handler handler  = new Handler();
                             PreferenceFile.setUser(loginResponse);
 
 
+                            SyncData.SyncUser(activity.getApplication(),handler,loginResponse.getUser().getEmail());
 
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.putExtra("new_login", true);
+                            startActivity(intent);
                             finishAffinity();
                         }
                     }
@@ -108,5 +115,18 @@ Handler handler  = new Handler();
                 }
             }
         }, Constants.BASE_URL + Constants.LOGIN, LoginActivity.this, handler, map);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (PreferenceFile.isLogged()) {
+            if (PreferenceFile.getFingirAuth()) {
+                //Enable();
+            } else {
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finishAffinity();
+            }
+        }
     }
 }
