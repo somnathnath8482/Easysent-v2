@@ -47,6 +47,10 @@
             android:exported="false"/>
         <activity
             android:name=".Activity.Messages.MessageActivity"
+            android:exported="false"/> <activity
+            android:name=".Activity.GroupChat.GroupChatDetails"
+            android:exported="false"/> <activity
+            android:name=".Activity.GroupChat.GroupDetailsActivity"
             android:exported="false"/>
     </application>
 

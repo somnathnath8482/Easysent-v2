@@ -1,5 +1,6 @@
 package easysent.in.Fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -10,9 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 
 import easysent.in.Activity.MainActivity;
 import easysent.in.Adapter.GroupsAdapter;
+import easysent.in.Helper.ShareData;
+import easysent.in.Helper.SyncData;
 import easysent.in.R;
 import easysent.in.Room.Groups.Groups_ViewModel;
 import easysent.in.databinding.FragmentGroupsBinding;
@@ -23,10 +27,11 @@ FragmentGroupsBinding binding;
 Handler handler = new Handler();
 Groups_ViewModel groups_viewModel;
     private String users ="";
-
+Activity activity;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity=getActivity();
         groups_viewModel = ViewModelProviders.of(this).get(Groups_ViewModel.class);
         if (getArguments() != null) {
 
@@ -57,9 +62,8 @@ Groups_ViewModel groups_viewModel;
 
 
         binding.btnCreateGroup.setOnClickListener(view1 -> {
-            //ShowGetGroupDEtails();
-            //SyncData.SyncGroups(getActivity().getApplication(), handler);
-           // MainActivity.navController.navigate(R.id.createGroupFragment,null,MainActivity.options);
+
+            Navigation.findNavController(binding.getRoot()).navigate(R.id.createGroupFragment);
         });
     }
 }

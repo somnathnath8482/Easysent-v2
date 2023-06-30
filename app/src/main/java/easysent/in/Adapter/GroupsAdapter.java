@@ -6,6 +6,7 @@ import static easysent.in.Helper.MethodClass.CashImage;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +29,7 @@ import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
 
+import easysent.in.Activity.GroupChat.GroupChatDetails;
 import easysent.in.Helper.Constants;
 import easysent.in.Helper.ImageGetter;
 import easysent.in.Helper.MethodClass;
@@ -156,9 +158,9 @@ public class GroupsAdapter extends ListAdapter<Groups, GroupsAdapter.ViewHolder>
                 Bundle bundle = new Bundle();
                 bundle.putString("id", item.getGroupId());
                 //MainActivity.navController.navigate(R.id.groupMessageFragment, bundle, MainActivity.options);
-                // Intent intent = new Intent(context, GroupChatDetails.class);
-                // intent.putExtra("id", item.getGroupId());
-                //  context.startActivity(intent);
+               Intent intent = new Intent(context, GroupChatDetails.class);
+                intent.putExtra("id", item.getGroupId());
+                 context.startActivity(intent);
             }
         });
 

@@ -35,9 +35,9 @@
         android:name="easysent.in.Fragments.Add_Clip_Fragment"
         android:label="fragment_add__clip_"
         tools:layout="@layout/fragment_add__clip_" />
-    <activity
-        android:id="@+id/setPasswordActivity"
-        android:name="easysent.in.Activity.SetPasswordActivity"
-        android:label="activity_set_password"
-        tools:layout="@layout/activity_set_password" />
+    <fragment
+        android:id="@+id/createGroupFragment"
+        android:name="easysent.in.Fragments.CreateGroupFragment"
+        android:label="CreateGroupFragment" />
+
 </navigation>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/MainBgCard"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="easysent.in.Fragments.CreateGroupFragment">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_2" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="@dimen/_5sdp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="15"
+        tools:listitem="@layout/user_item" />
+    <ImageView
+        android:id="@+id/iv_next"
+        android:visibility="gone"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:src="@drawable/ic_arrow_right"
+        android:background="@drawable/circle"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:padding="@dimen/_13sdp"
+        app:tint="@color/white"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        />
+</RelativeLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/thim_color">
+
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:src="@drawable/ic_back" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/search"
+        android:layout_toRightOf="@id/back"
+        android:text="Select User To Share"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_14sdp" />
+
+    <EditText
+        android:id="@+id/ed_search"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/search"
+        android:layout_toRightOf="@id/back"
+        android:background="@color/thim_color"
+        android:hint="Search User name.."
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/search"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:src="@drawable/ic_search" />
+
+</RelativeLayout>

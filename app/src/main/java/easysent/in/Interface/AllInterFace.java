@@ -16,4 +16,9 @@ public class AllInterFace implements OnClick {
     public void OnclickedWithData(String id, String value) {
 
     }
+
+    @Override
+    public void OnSelect(String... strings) {
+
+    }
 }
