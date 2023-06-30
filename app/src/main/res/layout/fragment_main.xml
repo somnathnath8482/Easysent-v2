@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/MainBgCard"
+    tools:context="easysent.in.Fragments.MainFragment">
+    <include
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_52sdp"
+        layout="@layout/main_toolbar"
+        />
+    <LinearLayout
+        android:id="@+id/button"
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btn_chats"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/green_border"
+            android:fontFamily="@font/adamina"
+            android:gravity="center"
+            android:paddingVertical="@dimen/_9sdp"
+            android:text="@string/chats"
+            android:textColor="@color/derk"
+            android:textSize="@dimen/_11sdp"
+            android:textStyle="bold" />   <TextView
+        android:id="@+id/btn_groups"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/green_border"
+        android:fontFamily="@font/adamina"
+        android:gravity="center"
+        android:paddingVertical="@dimen/_9sdp"
+        android:text="Groups"
+        android:textColor="@color/derk"
+        android:textSize="@dimen/_11sdp"
+        android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btn_users"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/green_border"
+            android:fontFamily="@font/adamina"
+            android:gravity="center"
+            android:paddingVertical="@dimen/_9sdp"
+            android:text="@string/users"
+            android:textColor="@color/derk"
+            android:textSize="@dimen/_11sdp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager"
+        android:layout_below="@id/button"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>
