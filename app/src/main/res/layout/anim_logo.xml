@@ -6,26 +6,31 @@
     android:layout_width="match_parent"
     android:background="@color/theme"
     android:layout_height="wrap_content">
-    <RelativeLayout
+
+    <View
+        android:id="@+id/view"
         android:layout_width="@dimen/_200sdp"
         android:layout_height="@dimen/_200sdp"
-        android:background="@drawable/rounded_card"
-        android:backgroundTint="@color/white"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_25sdp"
+        android:background="@drawable/rounded_card"
+        android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/logo_lay_title"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/_5sdp"
-            />
-    </RelativeLayout>
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/logo_lay_title"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        android:layout_marginBottom="@dimen/_10sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:layout_width="@dimen/_100sdp"
