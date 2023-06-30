@@ -137,9 +137,6 @@ public class UserAdapter extends ListAdapter<Users, UserAdapter.ViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* Bundle bundle = new Bundle();
-                bundle.putString("reciver",user.getId());
-                MainActivity.navController.navigate(R.id.messageFragment,bundle, MainActivity.options);*/
                 if (allInterface != null) {
                     allInterface.IsClicked(user.getId());
                 }

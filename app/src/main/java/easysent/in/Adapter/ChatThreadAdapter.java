@@ -29,6 +29,7 @@ import com.bumptech.glide.request.target.Target;
 import java.io.File;
 
 
+import easysent.in.Activity.Messages.MessageActivity;
 import easysent.in.Helper.Constants;
 import easysent.in.Helper.ImageGetter;
 import easysent.in.Helper.MethodClass;
@@ -151,9 +152,9 @@ public class ChatThreadAdapter extends ListAdapter<Active_Thread, ChatThreadAdap
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent intent = new Intent(context, MessageActivity.class);
-               // intent.putExtra("reciver", item.getId());
-               // context.startActivity(intent);
+               Intent intent = new Intent(context, MessageActivity.class);
+               intent.putExtra("reciver", item.getId());
+                context.startActivity(intent);
             }
         });
 

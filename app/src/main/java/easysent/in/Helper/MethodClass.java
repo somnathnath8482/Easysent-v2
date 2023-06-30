@@ -86,6 +86,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import easysent.in.Activity.LoginActivity;
+import easysent.in.Adapter.Attachment_viewpager;
 import easysent.in.Firebase.Data;
 import easysent.in.Firebase.Sender;
 import easysent.in.Helper.SharePref.PreferenceFile;
@@ -109,6 +110,7 @@ import easysent.in.Room.Messages.Message_View_Model;
 import easysent.in.Room.Threads.Thread_ViewModel;
 import easysent.in.Room.Users.UserVewModel;
 import easysent.in.Room.Users.Users;
+import easysent.in.databinding.FragmentViewAttachmentBinding;
 import easysent.in.databinding.ReportLayBinding;
 import io.github.muddz.styleabletoast.StyleableToast;
 
@@ -1710,6 +1712,49 @@ public class MethodClass {
             return null;
         }
     }
+    public static void showFullScreen(Activity context, Handler handler, String thread, String chat_id) {
+        LayoutInflater inflater = context.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.fragment_view_attachment, null);
+        @NonNull FragmentViewAttachmentBinding binding = FragmentViewAttachmentBinding.bind(dialogView);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
+        // AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        Message_View_Model message_view_model = new Message_View_Model(context.getApplication());
+        List<Chats> chats = message_view_model.selectAttachment(thread, chat_id);
+        Attachment_viewpager adapter = new Attachment_viewpager(chats, context, handler);
+
+        binding.recycler.setAdapter(adapter);
+        binding.recycler.setOffscreenPageLimit(4);
+
+        binding.recycler.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+
+                adapter.pauseAll();
+
+            }
+        });
+
+        builder.setView(dialogView);
+        builder.setCancelable(true);
+        AlertDialog dialog = builder.create();
+        //dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //dialog.getWindow().setStatusBarColor(context.getResources().getColor(R.color.Green));
+        if (dialog.getWindow() != null)
+            dialog.getWindow().getAttributes().windowAnimations = R.style.SlidingDialogAnimation;
+        dialog.show();
+
+        dialog.setOnDismissListener(dialogInterface -> {
+            try {
+                adapter.pauseAll();
+            } catch (Exception e) {
+
+            }
+        });
+
+    }
+
 
 
 }

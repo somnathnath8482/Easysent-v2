@@ -98,4 +98,7 @@ def activity_version = "1.7.2"
     implementation 'androidx.navigation:navigation-ui:2.5.3'
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.18.2'
+
 }

@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 
+import easysent.in.Activity.Messages.MessageActivity;
 import easysent.in.Adapter.UserAdapter;
 import easysent.in.Interface.AllInterFace;
 import easysent.in.Room.Users.UserVewModel;
@@ -58,9 +59,9 @@ Activity activity;
                 super.IsClicked(path);
                   Bundle bundle = new Bundle();
                 bundle.putString("reciver",path);
-               // Intent intent = new Intent(activity, MessageActivity.class);
-                //intent.putExtra("reciver", path);
-                //activity.startActivity(intent);
+                Intent intent = new Intent(activity, MessageActivity.class);
+                intent.putExtra("reciver", path);
+                activity.startActivity(intent);
             }
         });
         binding.recycler.setAdapter(adapter);
