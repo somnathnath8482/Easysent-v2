@@ -59,8 +59,7 @@ public class ChatThreadAdapter extends ListAdapter<Active_Thread, ChatThreadAdap
         public boolean areContentsTheSame(@NonNull Active_Thread oldItem, @NonNull Active_Thread newItem) {
             return oldItem.getRid() == newItem.getRid()
                     && oldItem.getId().equals(newItem.getId())
-                    && oldItem.getSender().equals(newItem.getSender())
-                    && oldItem.getReciver().equals(newItem.getReciver())
+                    && oldItem.getUnread()==newItem.getUnread()
                     && oldItem.getLast_message().equals(newItem.getLast_message())
                     && oldItem.getLast_message_type().equals(newItem.getLast_message_type())
                     && oldItem.getLast_message_status().equals(newItem.getLast_message_status());
