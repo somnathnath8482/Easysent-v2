@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Easysent(v2)"
 include ':app'
+include ':PickFile'

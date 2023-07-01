@@ -15,6 +15,8 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
+import com.easy.pickfile.PickFile;
+
 import java.io.File;
 import java.net.ServerSocket;
 
@@ -33,10 +35,12 @@ public class MainActivity extends AppCompatActivity {
     private NavOptions options;
     private NavController navController;
 Activity activity;
+public static PickFile pickFile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = this;
+      pickFile  = new PickFile(this,handler);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View header_view = binding.navigationView.getHeaderView(0);
         leftMenuBinding = LeftMenuBinding.bind(header_view);

@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.easy.pickfile.Interface.Onselect;
+import com.easy.pickfile.PickFile;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -51,29 +54,11 @@ Handler handler = new Handler();
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-     /*   MainActivity.filePicker.setFileSelectedListener(new FilePicker.OnFileSelectedListener() {
-            @Override
-            public void onFileSelectSuccess(@NonNull String s) {
-                profile_pic_path = s;
-                File file =new File(s);
-                if (file.exists()){
-                    binding.ivProfile.setImageBitmap(BitmapFactory.decodeFile(s));
-                }
-               // Toast.makeText(getContext(), "" + s, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFileSelectFailure() {
-                profile_pic_path = "";
-            }
-        });
-   */ }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        // return inflater.inflate(R.layout.fragment_edit_profile, container, false);
         binding = FragmentEditProfileBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -107,30 +92,28 @@ Handler handler = new Handler();
             }
         });
         binding.ivProfile.setOnClickListener(view1 -> {
-            //MainActivity.filePicker.pickFile(true, false, false, false, false, false);
-            /*MainActivity.pickFile.setAllInterface(new AllInterface(){
-                @Override
-                public void OnSelect(String path) {
-                    super.OnSelect(path);
-
-                    profile_pic_path = path;
-                    File file =new File(path);
-                    try {
-                        if (file.exists()){
-                            Uri uri = Uri.parse(path);
-                            binding.ivProfile.setImageBitmap(getRotatedBitmap(getContext(),path));
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-
-            });
-            MainActivity.pickFile.pickImage(false);*/
+           MainActivity.pickFile.PickImage(false);
 
         });
         GetUser();
+        manageFile();
+    }
+
+    private void manageFile() {
+        MainActivity.pickFile.setOnselect(new Onselect() {
+            @Override
+            public void onSelect(String... strings) {
+                if (strings!=null){
+                    Log.e("PhotoPicker", "onSelect: "+strings[0]+" "+strings[1] );
+                    String s = strings[1];
+                    profile_pic_path = s;
+                    File file =new File(s);
+                    if (file.exists()){
+                        binding.ivProfile.setImageBitmap(BitmapFactory.decodeFile(s));
+                    }
+                }
+            }
+        });
     }
 
     private void GetUser() {
@@ -218,7 +201,10 @@ Handler handler = new Handler();
     }
 
 
-
-
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MainActivity.pickFile.setOnselect(null);
+        handler = null;
+    }
 }
