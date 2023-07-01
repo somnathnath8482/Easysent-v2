@@ -1,9 +1,14 @@
 package com.easy.pickfile;
 
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -23,6 +28,7 @@ import java.util.Random;
 public class PickFile {
     ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
     ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia;
+    ActivityResultLauncher pdf_launcher;
     AppCompatActivity activity;
     Onselect onselect;
     Handler handler;
@@ -52,6 +58,38 @@ public class PickFile {
                 });
 
 
+        pdf_launcher = activity.registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            // Here, no request code
+
+                            if (result.getData() != null) {
+                                if (result.getData().getData() != null) {
+                                    try {
+
+                                        Uri returnUri = result.getData().getData();
+
+                                        readUri(returnUri);
+
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    //If uploaded with the new Android Photos gallery
+                                    ClipData clipData = result.getData().getClipData();
+                                    // pickiT.getMultiplePaths(clipData);
+                                }
+                            }
+
+
+                        }
+                    }
+                });
+
     }
 
     public void setOnselect(Onselect onselect) {
@@ -79,8 +117,32 @@ public class PickFile {
         String mimeType = "image/gif";
         pickMedia.launch(new PickVisualMediaRequest.Builder().setMediaType(new ActivityResultContracts.PickVisualMedia.SingleMimeType(mimeType)).build());
     }
+    public void PickPDF() {
+        if (true) {
 
 
+            Intent videoIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            videoIntent.addCategory(Intent.CATEGORY_OPENABLE);
+            videoIntent.setType("application/pdf");
+            videoIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+            videoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            videoIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+
+            pdf_launcher.launch(videoIntent);
+        }
+    }
+    public void PickDoc() {
+        if (true) {
+            Intent videoIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            videoIntent.addCategory(Intent.CATEGORY_OPENABLE);
+            videoIntent.setType("*/*");
+            videoIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+            videoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            videoIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+
+            pdf_launcher.launch(videoIntent);
+        }
+    }
     private void readUri(Uri returnUri) {
         new Thread(new Runnable() {
             @Override
