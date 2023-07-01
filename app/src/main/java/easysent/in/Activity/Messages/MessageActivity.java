@@ -1,7 +1,6 @@
 package easysent.in.Activity.Messages;
 
 
-
 import static easysent.in.Helper.Constants.BASE_URL;
 import static easysent.in.Helper.Constants.BLOCK_USER;
 import static easysent.in.Helper.Constants.CATCH_DIR;
@@ -48,8 +47,11 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+
+import com.easy.pickfile.Interface.IsSelect;
 import com.easy.pickfile.Interface.Onselect;
 import com.easy.pickfile.PickFile;
+import com.easy.pickfile.*;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONObject;
@@ -57,9 +59,11 @@ import org.json.JSONObject;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TimeZone;
 
 import easysent.in.Adapter.MessageNewAdapter;
@@ -85,6 +89,7 @@ import easysent.in.databinding.ActivityMessageBinding;
 import easysent.in.databinding.AttachmentLayoutBinding;
 import easysent.in.databinding.MainToolbarBinding;
 
+
 public class MessageActivity extends AppCompatActivity {
     ActivityMessageBinding binding;
 
@@ -103,13 +108,10 @@ public class MessageActivity extends AppCompatActivity {
     private String fileType = "";
 
     boolean isblocked = false;
-    boolean isloaded = false;
     public static Handler handler = new Handler();
-    private ItemTouchHelper.SimpleCallback call_tocach;
     private String forward = "";
-    private String[] storage_permission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
-    public static MainToolbarBinding mainToolbarBinding;
-    private Bitmap seleted_bitmap = null;
+    public  MainToolbarBinding mainToolbarBinding;
+    private Bitmap selected_bitmap = null;
     private String reciver_name = "";
     Context context;
     Activity activity;
@@ -122,7 +124,7 @@ public class MessageActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         activity = this;
         context = this;
-        pickFile = new PickFile(this,handler);
+        pickFile = new PickFile(this, handler);
 
         if (getIntent() != null) {
             reciver = getIntent().getStringExtra("reciver");
@@ -185,7 +187,7 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
-        call_tocach = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        ItemTouchHelper.SimpleCallback call_tocach = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -247,7 +249,9 @@ public class MessageActivity extends AppCompatActivity {
         OnClick();
         Init();
 
+        checkPermissions();
     }
+
 
     private void SendMessage(String sender, String reciver, String message, Activity context, String email, String m_id) {
         new Thread(new Runnable() {
@@ -403,7 +407,7 @@ public class MessageActivity extends AppCompatActivity {
                             String email = PreferenceFile.getUser().getUser().getEmail();
                             if (fileType.equalsIgnoreCase("II")) {
                                 CustomProgressbar.showProgressBar(activity, false);
-                                MethodClass.cashattachmentImage2(seleted_bitmap, mid, handler, activity, new AllInterFace() {
+                                MethodClass.cashattachmentImage2(selected_bitmap, mid, handler, activity, new AllInterFace() {
                                     @Override
                                     public void IsClicked(String s) {
                                         super.IsClicked(s);
@@ -622,9 +626,9 @@ public class MessageActivity extends AppCompatActivity {
                 try {
                     if (file.exists()) {
 
-                        seleted_bitmap = getRotatedBitmap(activity, fi);
+                        selected_bitmap = getRotatedBitmap(activity, fi);
                         filePath = fi;
-                        binding.ivAttachment.setImageBitmap(seleted_bitmap);
+                        binding.ivAttachment.setImageBitmap(selected_bitmap);
                         binding.idTvAttachment.setText(file.getName());
                         this.fileType = "I";
 
@@ -839,5 +843,25 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
+    private void checkPermissions() {
+        List<String> permission_required = new ArrayList<>();
+        permission_required.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        permission_required.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+      CheckPermission checkPermission = new CheckPermission(this);
+      checkPermission.is_permitted(permission_required, false, new IsSelect() {
+          @Override
+          public void isSelect(boolean is) {
+              MethodClass.requestFileInnfo(activity,new AllInterFace(){
+                  @Override
+                  public void isClicked(boolean is) {
+                      super.isClicked(is);
+                      if (is){
+                          checkPermission.is_permitted(permission_required,true,null);
+                      }
+                  }
+              });
+          }
+      });
+    }
 
 }

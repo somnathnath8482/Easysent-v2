@@ -1713,6 +1713,7 @@ public class MethodClass {
             return null;
         }
     }
+
     public static void showFullScreen(Activity context, Handler handler, String thread, String chat_id) {
         LayoutInflater inflater = context.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.fragment_view_attachment, null);
@@ -1755,6 +1756,7 @@ public class MethodClass {
         });
 
     }
+
     public static void showFullScreenGroup(Activity context, Handler handler, String group, String chat_id) {
         LayoutInflater inflater = context.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.fragment_view_attachment, null);
@@ -1798,6 +1800,37 @@ public class MethodClass {
 
     }
 
+    public static void requestFileInnfo(Activity activity, AllInterFace allInterFace) {
+        LottieAlertDialog lottieAlertDialog = new LottieAlertDialog.Builder(activity, DialogTypes.TYPE_WARNING)
+                .setPositiveButtonColor(Color.parseColor("#048B3A"))
+                .setNegativeButtonColor(Color.parseColor("#DA1606"))
+                .setNoneButtonColor(Color.parseColor("#038DFC"))
+                .setPositiveTextColor(Color.WHITE)
+                .setNegativeTextColor(Color.WHITE)
+                .setNoneTextColor(Color.WHITE)
+                .setTitle("Permission required")
+                .setDescription("Easysent required Read file storage permission to share any media files\n" +
+                        " like image,pdf,docx, and audio, video please allow us the permission to smooth experience")
+                .setPositiveText("Allow")
+                .setNegativeText("Not now")
+                .setPositiveListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NonNull LottieAlertDialog lottieAlertDialog) {
+                        allInterFace.isClicked(true);
+                        lottieAlertDialog.dismiss();
+                    }
+                }).setNegativeListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NonNull LottieAlertDialog lottieAlertDialog) {
+                        lottieAlertDialog.dismiss();
+                    }
+                })
+                .build();
+
+        lottieAlertDialog.setCancelable(false);
+        lottieAlertDialog.setCanceledOnTouchOutside(false);
+        lottieAlertDialog.show();
+    }
 
 
 }
