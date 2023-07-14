@@ -62,4 +62,5 @@
     <string name="ok">Ok</string>
     <string name="create_new_group">Create new group</string>
     <string name="exit_group">Exit Group</string>
+    <string name="login_history">Login History:</string>
 </resources>

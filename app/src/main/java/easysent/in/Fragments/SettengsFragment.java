@@ -1,6 +1,13 @@
 package easysent.in.Fragments;
 
+import static easysent.in.Helper.Constants.BASE_URL;
+import static easysent.in.Helper.Constants.GET_ALL_USER;
+import static easysent.in.Helper.Constants.LOGIN_HISTORY;
+
+import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,25 +15,54 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 
+import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
+import easysent.in.Adapter.LoginHistoryAdapter;
+import easysent.in.Helper.MethodClass;
 import easysent.in.Helper.SharePref.PreferenceFile;
+import easysent.in.Helper.SyncData;
+import easysent.in.Interface.Response;
+import easysent.in.Response.AllUsers.AllUsersResponse;
+import easysent.in.Response.AllUsers.UsersItem;
+import easysent.in.Response.LoginHistory.HistoryItem;
+import easysent.in.Response.LoginHistory.LoginHistoryResponse;
+import easysent.in.Room.Users.Users;
 import easysent.in.databinding.FragmentSettengsBinding;
 
 public class SettengsFragment extends Fragment {
 
 FragmentSettengsBinding binding;
+Application context;
+Handler handler = new Handler();
+LoginHistoryAdapter adapter;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+       context = getActivity().getApplication();
 
-        }
+       adapter = new LoginHistoryAdapter(new DiffUtil.ItemCallback<HistoryItem>() {
+           @Override
+           public boolean areItemsTheSame(@NonNull HistoryItem oldItem, @NonNull HistoryItem newItem) {
+               return newItem.getId().equals(oldItem.getId());
+           }
+
+           @Override
+           public boolean areContentsTheSame(@NonNull HistoryItem oldItem, @NonNull HistoryItem newItem) {
+               return newItem.getId().equals(oldItem.getId());
+           }
+       });
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_settengs, container, false);
@@ -52,6 +88,11 @@ FragmentSettengsBinding binding;
                 PreferenceFile.setFingirAuth(false);
             }
         });
+        binding.recycler.setLayoutManager(new LinearLayoutManager(context));
+        binding.recycler.setAdapter(adapter);
+
+        getHistory();
+
     }
 
     private void Enable() {
@@ -69,5 +110,28 @@ FragmentSettengsBinding binding;
             }
         });*/
 
+    }
+    private void getHistory(){
+        String Header =  PreferenceFile.getUser().getUser().getEmail();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                MethodClass.CallHeader(new Response() {
+                    @Override
+                    public void onResponse(JSONObject res) {
+
+                        if (!res.has("error")) {
+                            Gson gson = new Gson();
+                            LoginHistoryResponse response = gson.fromJson(res.toString(), LoginHistoryResponse.class);
+                            if (response != null) {
+
+                                adapter.submitList(response.getHistory());
+                            }
+                        }
+
+                    }
+                }, BASE_URL + LOGIN_HISTORY, context, handler, Header, new HashMap<>());
+            }
+        }).start();
     }
 }

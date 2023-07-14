@@ -46,4 +46,7 @@ public class Constants {
     public static final String GET_GROUP_USERS = "Group/get_group_user.php";
     public static final String JOIN_USERS= "Group/join_user.php";
 
+
+    public static final String LOGIN_HISTORY= "get_login_history.php";
+
 }

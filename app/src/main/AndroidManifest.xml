@@ -52,6 +52,14 @@
             android:exported="false"/> <activity
             android:name=".Activity.GroupChat.GroupDetailsActivity"
             android:exported="false"/>
+        <receiver android:name=".Networking.NetworkChangeReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"
+                    tools:ignore="BatteryLife" />
+
+            </intent-filter>
+        </receiver>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

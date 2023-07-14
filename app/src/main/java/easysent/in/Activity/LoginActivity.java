@@ -8,6 +8,7 @@ import androidx.core.splashscreen.SplashScreen;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -66,6 +67,9 @@ Activity activity;
                     map.put("password", MethodClass.CheckEmpty(binding.edPassword));
                     map.put("username", MethodClass.CheckEmpty(binding.edUsername));
                     map.put("token", PreferenceFile.getData(FIREBASE_TOKEN));
+                    map.put("device", Build.MANUFACTURER);
+                    map.put("model", Build.MODEL);
+                    map.put("device_id", Build.ID);
                 } catch (Exception e) {
                     EditText editText = binding.getRoot().findViewById(Integer.parseInt(e.getMessage()));
                     editText.requestFocus();
