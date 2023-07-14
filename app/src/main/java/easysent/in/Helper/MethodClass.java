@@ -5,6 +5,7 @@ import static easysent.in.Helper.Constants.CATCH_DIR;
 import static easysent.in.Helper.Constants.CATCH_DIR2;
 import static easysent.in.Helper.Constants.GET_IP;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
@@ -12,6 +13,7 @@ import android.app.DatePickerDialog;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -21,6 +23,7 @@ import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
@@ -45,6 +48,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager2.widget.ViewPager2;
@@ -1831,6 +1836,46 @@ public class MethodClass {
         lottieAlertDialog.setCanceledOnTouchOutside(false);
         lottieAlertDialog.show();
     }
+    public static String[] storge_permissions = {
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+    };
 
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    public static String[] storge_permissions_33 = {
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_AUDIO,
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.CAMERA
+    };
+
+    public static String[] permissions() {
+        String[] p;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            p = storge_permissions_33;
+        } else {
+            p = storge_permissions;
+        }
+        return p;
+    }
+    public static boolean isAllowed(Activity activity) {
+        String[] permissions = MethodClass.permissions();
+        List<String>reqper= new ArrayList<>();
+
+        for (int i = 0; i < permissions.length; i++) {
+            if (   ContextCompat.checkSelfPermission(activity, permissions[i]) != PackageManager.PERMISSION_GRANTED){
+                reqper.add(permissions[i]);
+            }
+        }
+
+        if (reqper.size()>0){
+            activity.requestPermissions(reqper.toArray(new String[0]),1890);
+            return false;
+        }else{
+            return  true;
+        }
+
+    }
 
 }

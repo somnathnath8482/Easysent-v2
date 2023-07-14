@@ -24,8 +24,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.easy.pickfile.Interface.Onselect;
-import com.easy.pickfile.PickFile;
+
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -34,6 +33,8 @@ import java.io.File;
 import java.util.HashMap;
 
 import easysent.in.Activity.MainActivity;
+import easysent.in.FileHandle.Onselect;
+import easysent.in.FileHandle.PickFile;
 import easysent.in.Helper.Constants;
 import easysent.in.Helper.MethodClass;
 import easysent.in.Helper.SharePref.PreferenceFile;
@@ -44,16 +45,15 @@ import easysent.in.Response.Login.User;
 import easysent.in.databinding.FragmentEditProfileBinding;
 import io.github.muddz.styleabletoast.StyleableToast;
 
-
 public class EditProfileFragment extends Fragment {
     FragmentEditProfileBinding binding;
     private String profile_pic_path="";
-
+PickFile pickFile;
 Handler handler = new Handler();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+pickFile = new PickFile(EditProfileFragment.this, getContext(), handler);
     }
 
     @Override
@@ -92,7 +92,7 @@ Handler handler = new Handler();
             }
         });
         binding.ivProfile.setOnClickListener(view1 -> {
-           MainActivity.pickFile.PickImage(false);
+           pickFile.PickImage(false);
 
         });
         GetUser();
@@ -100,7 +100,7 @@ Handler handler = new Handler();
     }
 
     private void manageFile() {
-        MainActivity.pickFile.setOnselect(new Onselect() {
+        pickFile.setOnselect(new Onselect() {
             @Override
             public void onSelect(String... strings) {
                 if (strings!=null){
@@ -204,7 +204,6 @@ Handler handler = new Handler();
     @Override
     public void onDestroy() {
         super.onDestroy();
-        MainActivity.pickFile.setOnselect(null);
         handler = null;
     }
 }

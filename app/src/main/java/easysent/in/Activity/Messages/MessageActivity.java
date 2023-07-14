@@ -47,11 +47,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-
-import com.easy.pickfile.Interface.IsSelect;
-import com.easy.pickfile.Interface.Onselect;
-import com.easy.pickfile.PickFile;
-import com.easy.pickfile.*;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONObject;
@@ -68,6 +63,8 @@ import java.util.TimeZone;
 
 import easysent.in.Adapter.MessageNewAdapter;
 import easysent.in.Encription.Encripter;
+import easysent.in.FileHandle.Onselect;
+import easysent.in.FileHandle.PickFile;
 import easysent.in.Firebase.Data;
 import easysent.in.Firebase.Sender;
 import easysent.in.Helper.Constants;
@@ -124,7 +121,7 @@ public class MessageActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         activity = this;
         context = this;
-        pickFile = new PickFile(this, handler);
+        pickFile = new PickFile(this,this, handler);
 
         if (getIntent() != null) {
             reciver = getIntent().getStringExtra("reciver");
@@ -248,8 +245,7 @@ public class MessageActivity extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(binding.recycler);
         OnClick();
         Init();
-
-        checkPermissions();
+        MethodClass.isAllowed(this);
     }
 
 
@@ -824,12 +820,13 @@ public class MessageActivity extends AppCompatActivity {
 
         binding1.layVideo.setOnClickListener(view2 -> {
             dialog.dismiss();
-            pickFile.PickVideo();
+            pickFile.Pickvideo();
 
 
         });
 
         binding1.layCaptureImage.setOnClickListener(view2 -> {
+            pickFile.captureImage();
             dialog.dismiss();
 
 
@@ -843,25 +840,5 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-    private void checkPermissions() {
-        List<String> permission_required = new ArrayList<>();
-        permission_required.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-        permission_required.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-      CheckPermission checkPermission = new CheckPermission(this);
-      checkPermission.is_permitted(permission_required, false, new IsSelect() {
-          @Override
-          public void isSelect(boolean is) {
-              MethodClass.requestFileInnfo(activity,new AllInterFace(){
-                  @Override
-                  public void isClicked(boolean is) {
-                      super.isClicked(is);
-                      if (is){
-                          checkPermission.is_permitted(permission_required,true,null);
-                      }
-                  }
-              });
-          }
-      });
-    }
 
 }

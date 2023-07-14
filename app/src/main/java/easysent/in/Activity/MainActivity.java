@@ -1,24 +1,19 @@
 package easysent.in.Activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.splashscreen.SplashScreen;
-import androidx.core.view.GravityCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.NavOptions;
-import androidx.navigation.fragment.NavHostFragment;
-
 import android.app.Activity;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
-import com.easy.pickfile.PickFile;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
+import androidx.navigation.fragment.NavHostFragment;
 
 import java.io.File;
-import java.net.ServerSocket;
 
 import easysent.in.BuildConfig;
 import easysent.in.Helper.Constants;
@@ -34,13 +29,12 @@ public class MainActivity extends AppCompatActivity {
     Handler handler = new Handler();
     private NavOptions options;
     private NavController navController;
-Activity activity;
-public static PickFile pickFile;
+    Activity activity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = this;
-      pickFile  = new PickFile(this,handler);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View header_view = binding.navigationView.getHeaderView(0);
         leftMenuBinding = LeftMenuBinding.bind(header_view);
@@ -49,18 +43,18 @@ public static PickFile pickFile;
         Init();
         DrawaerClick();
 
-        if (getIntent()!=null && getIntent().getBooleanExtra("new_login", false)){
+        if (getIntent() != null && getIntent().getBooleanExtra("new_login", false)) {
             Syc();
         }
 
     }
 
     private void Syc() {
-        SyncData.SyncThread(activity.getApplication(),handler);
-        SyncData.SyncGroups(activity.getApplication(),handler);
-        SyncData.SyncChat(activity.getApplication(),handler);
-        SyncData.SyncBlock(activity.getApplication(),handler);
-        SyncData.SyncAllGroupChats(activity.getApplication(),handler);
+        SyncData.SyncThread(activity.getApplication(), handler);
+        SyncData.SyncGroups(activity.getApplication(), handler);
+        SyncData.SyncChat(activity.getApplication(), handler);
+        SyncData.SyncBlock(activity.getApplication(), handler);
+        SyncData.SyncAllGroupChats(activity.getApplication(), handler);
     }
 
     private void DrawaerClick() {
