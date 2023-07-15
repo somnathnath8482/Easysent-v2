@@ -4,6 +4,8 @@ import static easysent.in.Helper.Constants.BASE_URL;
 import static easysent.in.Helper.Constants.CATCH_DIR;
 import static easysent.in.Helper.Constants.CATCH_DIR2;
 import static easysent.in.Helper.Constants.GET_IP;
+import static easysent.in.Helper.Constants.LOGIN_HISTORY;
+import static easysent.in.Helper.Constants.LOGOUT;
 
 import android.Manifest;
 import android.app.Activity;
@@ -201,7 +203,7 @@ public class MethodClass {
         }
     }
 
-    public static void logout(Activity activity, Handler handler) {
+    public static void logout(Activity activity, Handler handler,String id) {
 
         Message_View_Model message_view_model = ViewModelProviders.of((FragmentActivity) activity).get(Message_View_Model.class);
         Thread_ViewModel thread_viewModel = ViewModelProviders.of((FragmentActivity) activity).get(Thread_ViewModel.class);
@@ -219,8 +221,16 @@ public class MethodClass {
                 .setPositiveListener(new ClickListener() {
                     @Override
                     public void onClick(@NonNull LottieAlertDialog lottieAlertDialog) {
-                        lottieAlertDialog.dismiss();
 
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put("id", id);
+                        CallUpdate(new Response() {
+                            @Override
+                            public void onResponse(JSONObject res) {
+
+                            }
+                        }, BASE_URL + LOGOUT, activity.getApplication(), handler,"", map);
+                        lottieAlertDialog.dismiss();
                         String type = "STATUS";
                         Data data = new Data(type, PreferenceFile.getUser().getUser().getId(), "off");
                         Sender se = new Sender(data, "/topics/EASY_ALL");
@@ -233,6 +243,7 @@ public class MethodClass {
                         activity.finishAffinity();
                         activity.startActivity(new Intent(activity, LoginActivity.class));
                         PreferenceFile.clearSessionManager();
+
                     }
                 }).setNegativeListener(new ClickListener() {
                     @Override

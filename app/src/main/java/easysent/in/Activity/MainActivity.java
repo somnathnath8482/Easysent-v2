@@ -18,6 +18,7 @@ import java.io.File;
 import easysent.in.BuildConfig;
 import easysent.in.Helper.Constants;
 import easysent.in.Helper.MethodClass;
+import easysent.in.Helper.SharePref.PreferenceFile;
 import easysent.in.Helper.SyncData;
 import easysent.in.R;
 import easysent.in.databinding.ActivityMainBinding;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         });
         leftMenuBinding.layLogout.setOnClickListener(view -> {
             binding.drawer.closeDrawer(GravityCompat.START);
-            MethodClass.logout(MainActivity.this, handler);
+            MethodClass.logout(MainActivity.this, handler, PreferenceFile.getUser().getUser().getId());
         });
         leftMenuBinding.layEditProfile.setOnClickListener(view -> {
             binding.drawer.closeDrawer(GravityCompat.START);

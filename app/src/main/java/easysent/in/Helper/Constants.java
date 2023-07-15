@@ -48,5 +48,6 @@ public class Constants {
 
 
     public static final String LOGIN_HISTORY= "get_login_history.php";
+    public static final String LOGOUT= "logout.php";
 
 }

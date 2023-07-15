@@ -13,6 +13,9 @@ public class LoginResponse{
 	@SerializedName("message")
 	private String message;
 
+	@SerializedName("login_token")
+	private String login_token;
+
 	@SerializedName("user")
 	private User user;
 
@@ -26,5 +29,9 @@ public class LoginResponse{
 
 	public User getUser(){
 		return user;
+	}
+
+	public String getlogin_token() {
+		return login_token;
 	}
 }

@@ -15,11 +15,7 @@ import easysent.in.R;
 import easysent.in.Response.LoginHistory.HistoryItem;
 import easysent.in.databinding.LoginHistoryItemBinding;
 
-/**
- * Created by Somnath nath on 14,July,2023
- * Artix Development,
- * India.
- */
+
 public class LoginHistoryAdapter extends ListAdapter<HistoryItem,LoginHistoryAdapter.ViewHolder> {
 
     public LoginHistoryAdapter(@NonNull DiffUtil.ItemCallback<HistoryItem> diffCallback) {
@@ -39,11 +35,15 @@ public class LoginHistoryAdapter extends ListAdapter<HistoryItem,LoginHistoryAda
         HistoryItem item = getItem(position);
         holder.binding.device.setText(item.getManufacturer()+" "+item.getModel());
         holder.binding.date.setText(MethodClass.changeDateFormat(item.getCreatedAt()));
-        if (item.getDeviceId().equals(Build.ID)){
+        if (position==0){
+            holder.binding.status.setText("This device (Currently active)");
+            holder.binding.status.setVisibility(View.VISIBLE);
+        }else if (item.getDeviceId().equals(Build.ID)){
             holder.binding.status.setText("This device");
             holder.binding.status.setVisibility(View.VISIBLE);
         }else{
             holder.binding.status.setText("");
+            holder.binding.status.setVisibility(View.GONE);
         }
 
     }
