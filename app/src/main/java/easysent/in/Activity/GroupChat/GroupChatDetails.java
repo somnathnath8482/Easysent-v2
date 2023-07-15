@@ -40,6 +40,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagingData;
@@ -68,6 +69,8 @@ import java.util.TimeZone;
 
 import easysent.in.Adapter.GroupChatNewAdapter;
 import easysent.in.Encription.Encripter;
+import easysent.in.FileHandle.Onselect;
+import easysent.in.FileHandle.PickFile;
 import easysent.in.Firebase.Data;
 import easysent.in.Firebase.Sender;
 import easysent.in.Helper.Constants;
@@ -77,6 +80,7 @@ import easysent.in.Helper.MethodClass;
 import easysent.in.Helper.ShareData;
 import easysent.in.Helper.SharePref.PreferenceFile;
 import easysent.in.Interface.AllInterFace;
+import easysent.in.Interface.Messages.LiveData_Messages;
 import easysent.in.Interface.OnMenuItemClick;
 import easysent.in.Interface.Response;
 import easysent.in.R;
@@ -100,7 +104,7 @@ public class GroupChatDetails extends AppCompatActivity {
     Groups_chat_ViewModel groups_chat_viewModel;
     Application application;
     Context context;
-    Activity activity;
+    AppCompatActivity activity;
     String id = "";
     private String filePath = "";
     private String fileType = "";
@@ -121,6 +125,7 @@ public class GroupChatDetails extends AppCompatActivity {
     private String total_user = "";
     private String p_pic = "";
     private String my_id = "";
+    private PickFile pickFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +138,7 @@ public class GroupChatDetails extends AppCompatActivity {
         activity = this;
         context = this;
         id = getIntent().getStringExtra("id");
-
+        pickFile = new PickFile(this, context,handler);
 
         mainToolbarBinding = MainToolbarBinding.bind(binding.toolbar.getRoot());
         mainToolbarBinding.back.setVisibility(View.VISIBLE);
@@ -156,30 +161,36 @@ public class GroupChatDetails extends AppCompatActivity {
         binding.recycler.setHasFixedSize(true);
         binding.recycler.setAdapter(adapter);
 
-        groups_chat_viewModel.getMessageBy_paging(id, false).observe(this, new Observer<PagingData<Group_Chat>>() {
+        groups_chat_viewModel.getMessageBy_paging(id, false, new LiveData_Messages<Group_Chat>() {
             @Override
-            public void onChanged(PagingData<Group_Chat> group_chats) {
-                adapter.submitData(getLifecycle(), group_chats);
-                adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            public void allMessage(LiveData<PagingData<Group_Chat>> messages) {
+                messages.observe(GroupChatDetails.this, new Observer<PagingData<Group_Chat>>() {
                     @Override
-                    public void onItemRangeInserted(int positionStart, int itemCount) {
-                        super.onItemRangeInserted(positionStart, itemCount);
+                    public void onChanged(PagingData<Group_Chat> group_chats) {
+                        adapter.submitData(getLifecycle(), group_chats);
+                        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                            @Override
+                            public void onItemRangeInserted(int positionStart, int itemCount) {
+                                super.onItemRangeInserted(positionStart, itemCount);
 
-                        groups_viewModel.updateUnread(id);
+                                groups_viewModel.updateUnread(id);
+                            }
+                            @Override
+                            public void onItemRangeChanged(int positionStart, int itemCount) {
+                                super.onItemRangeChanged(positionStart, itemCount);
+                                Log.e("TAG", "onItemRangeChanged: start"+positionStart+" icount "+itemCount );
+                                binding.recycler.smoothScrollToPosition(positionStart+itemCount);
+                                int curr = adapter.snapshot().size();
+                                total = curr;
+                            }
+
+
+                        });
                     }
-                    @Override
-                    public void onItemRangeChanged(int positionStart, int itemCount) {
-                        super.onItemRangeChanged(positionStart, itemCount);
-                        Log.e("TAG", "onItemRangeChanged: start"+positionStart+" icount "+itemCount );
-                        binding.recycler.smoothScrollToPosition(positionStart+itemCount);
-                        int curr = adapter.snapshot().size();
-                        total = curr;
-                    }
-
-
                 });
             }
         });
+
 
         groups = groups_viewModel.selectgroup(id);
         if (groups != null) {
@@ -291,137 +302,114 @@ public class GroupChatDetails extends AppCompatActivity {
     }
 
     private void Init() {
-      /*  if (pickFile != null)
-            pickFile.setAllInterface(new AllInterface() {
+        if (pickFile != null)
+            pickFile.setOnselect(new Onselect() {
                 @Override
-                public void OnSelect(String path) {
-                    super.OnSelect(path);
-                    File file = new File(path);
-                    try {
-                        if (file.exists()) {
-                            seleted_bitmap = getRotatedBitmap(activity, path);
-                            binding.ivAttachment.setImageBitmap(seleted_bitmap);
-                            binding.idTvAttachment.setText(file.getName());
-                            fileType = "I";
-                            filePath = path;
-
-                            Transition transition = new Slide(Gravity.START);
-                            transition.setDuration(10);
-                            transition.addTarget(binding.layAttach);
-
-                            TransitionManager.beginDelayedTransition((ViewGroup) binding.layAttach.getParent(), transition);
-                            binding.layAttach.setVisibility(View.VISIBLE);
-                            binding.ivAttachment.setVisibility(View.VISIBLE);
-                            binding.layDoc.setVisibility(View.GONE);
-                            binding.dismissReplay.performClick();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
-
-                @Override
-                public void OnSelect(String ty, String path) {
-                    super.OnSelect(ty, path);
-                    if (ty != null && path != null) {
+                public void onSelect(String... strings) {
+                    if (strings!=null && strings.length>1){
+                        String ty = strings[0];
+                        String path= strings[1];
+                        if (ty != null && path != null) {
 
 
-                        File file = new File(path);
-                        if (file.exists()) {
-                            String name = ty;
+                            File file = new File(path);
+                            if (file.exists()) {
+                                String name = ty;
 
-                            int lastIndexOf = name.lastIndexOf(".");
+                                int lastIndexOf = name.lastIndexOf(".");
 
-                            String type = "";
-                            if (lastIndexOf == -1) {
-                                Toast.makeText(activity, "Failed to select file", Toast.LENGTH_SHORT).show();
-                                return;
+                                String type = "";
+                                if (lastIndexOf == -1) {
+                                    Toast.makeText(activity, "Failed to select file", Toast.LENGTH_SHORT).show();
+                                    return;
 
-                            } else {
-                                type = name.substring(lastIndexOf);
-                            }
-
-
-                            if (type.equalsIgnoreCase(".png")
-                                    || type.equalsIgnoreCase(".JPEG")
-                                    || type.equalsIgnoreCase(".JPG")) {
-                                filePath = MethodClass.getRightAngleImage(path);
-                                binding.ivAttachment.setImageBitmap(BitmapFactory.decodeFile(filePath));
-                                binding.idTvAttachment.setText(file.getName());
-                                fileType = "I";
-
-                                binding.ivAttachment.setVisibility(View.VISIBLE);
-                                binding.layDoc.setVisibility(View.GONE);
+                                } else {
+                                    type = name.substring(lastIndexOf);
+                                }
 
 
-                            } else if (type.equalsIgnoreCase(".PDF")) {
-                                binding.ivDoc.setImageDrawable(getResources().getDrawable(R.drawable.ic_pdf));
-                                binding.idTvAttachment.setText(file.getName());
-                                fileType = "P";
+                                if (type.equalsIgnoreCase(".png")
+                                        || type.equalsIgnoreCase(".JPEG")
+                                        || type.equalsIgnoreCase(".JPG")) {
+                                    filePath = MethodClass.getRightAngleImage(path);
+                                    seleted_bitmap  = BitmapFactory.decodeFile(filePath);
+                                    binding.ivAttachment.setImageBitmap(seleted_bitmap);
+                                    binding.idTvAttachment.setText(file.getName());
+                                    fileType = "I";
 
-                                binding.ivAttachment.setVisibility(View.GONE);
-                                binding.layDoc.setVisibility(View.VISIBLE);
-                            } else if (type.equalsIgnoreCase(".mp4")) {
-                                binding.ivAttachment.setImageDrawable(getResources().getDrawable(R.drawable.ic_video));
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (file.exists()) {
-                                            FutureTarget<Bitmap> futureTarget = Glide.with(activity)
-                                                    .asBitmap()
-                                                    .override(600, 600)
-                                                    .load(file.getAbsolutePath())
-                                                    .submit();
+                                    binding.ivAttachment.setVisibility(View.VISIBLE);
+                                    binding.layDoc.setVisibility(View.GONE);
 
-                                            try {
-                                                Bitmap bi = futureTarget.get();
-                                                handler.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        Glide.with(activity).load(bi)
-                                                                .into(binding.ivDoc);
-                                                    }
-                                                });
 
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
+                                } else if (type.equalsIgnoreCase(".PDF")) {
+                                    binding.ivDoc.setImageDrawable(getResources().getDrawable(R.drawable.ic_pdf));
+                                    binding.idTvAttachment.setText(file.getName());
+                                    fileType = "P";
+
+                                    binding.ivAttachment.setVisibility(View.GONE);
+                                    binding.layDoc.setVisibility(View.VISIBLE);
+                                } else if (type.equalsIgnoreCase(".mp4")) {
+                                    binding.ivAttachment.setImageDrawable(getResources().getDrawable(R.drawable.ic_video));
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (file.exists()) {
+                                                FutureTarget<Bitmap> futureTarget = Glide.with(activity)
+                                                        .asBitmap()
+                                                        .override(600, 600)
+                                                        .load(file.getAbsolutePath())
+                                                        .submit();
+
+                                                try {
+                                                    Bitmap bi = futureTarget.get();
+                                                    handler.post(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            Glide.with(activity).load(bi)
+                                                                    .into(binding.ivDoc);
+                                                        }
+                                                    });
+
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
                                         }
-                                    }
-                                }).start();
+                                    }).start();
 
 
-                                binding.idTvAttachment.setText(file.getName());
-                                fileType = "V";
-                                binding.ivAttachment.setVisibility(View.GONE);
-                                binding.layDoc.setVisibility(View.VISIBLE);
-                            } else {
-                                binding.ivDoc.setImageDrawable(getResources().getDrawable(R.drawable.ic_files));
-                                binding.idTvAttachment.setText(file.getName());
-                                fileType = "D";
-                                binding.ivAttachment.setVisibility(View.GONE);
-                                binding.layDoc.setVisibility(View.VISIBLE);
+                                    binding.idTvAttachment.setText(file.getName());
+                                    fileType = "V";
+                                    binding.ivAttachment.setVisibility(View.GONE);
+                                    binding.layDoc.setVisibility(View.VISIBLE);
+                                } else {
+                                    binding.ivDoc.setImageDrawable(getResources().getDrawable(R.drawable.ic_files));
+                                    binding.idTvAttachment.setText(file.getName());
+                                    fileType = "D";
+                                    binding.ivAttachment.setVisibility(View.GONE);
+                                    binding.layDoc.setVisibility(View.VISIBLE);
+                                }
+
+                                Transition transition = new Slide(Gravity.START);
+                                transition.setDuration(10);
+                                transition.addTarget(binding.layAttach);
+
+                                filePath = path;
+
+
+                                TransitionManager.beginDelayedTransition((ViewGroup) binding.layAttach.getParent(), transition);
+                                binding.layAttach.setVisibility(View.VISIBLE);
+                                binding.dismissReplay.performClick();
                             }
 
-                            Transition transition = new Slide(Gravity.START);
-                            transition.setDuration(10);
-                            transition.addTarget(binding.layAttach);
 
-                            filePath = path;
-
-
-                            TransitionManager.beginDelayedTransition((ViewGroup) binding.layAttach.getParent(), transition);
-                            binding.layAttach.setVisibility(View.VISIBLE);
-                            binding.dismissReplay.performClick();
                         }
-
-
                     }
-
-
                 }
-            });*/
+            });
+
+
+
         checkShare();
     }
     private void checkShare() {
@@ -813,27 +801,32 @@ public class GroupChatDetails extends AppCompatActivity {
         dialog.show();
 
         binding1.layImages.setOnClickListener(view2 -> {
+            pickFile.PickImage(false);
             dialog.dismiss();
 
 
         });
 
         binding1.layPdf.setOnClickListener(view2 -> {
+            pickFile.PickPDF();
             dialog.dismiss();
 
         });
 
         binding1.layDocs.setOnClickListener(view2 -> {
+            pickFile.PickDoc();
             dialog.dismiss();
 
         });
 
         binding1.layVideo.setOnClickListener(view2 -> {
+            pickFile.Pickvideo();
             dialog.dismiss();
 
         });
 
         binding1.layCaptureImage.setOnClickListener(view2 -> {
+            pickFile.captureImage();
             dialog.dismiss();
 
 

@@ -9,6 +9,9 @@ import androidx.paging.PagingData;
 
 import java.util.List;
 
+import easysent.in.Interface.Messages.LiveData_Item;
+import easysent.in.Interface.Messages.LiveData_Messages;
+
 public class Groups_chat_ViewModel extends AndroidViewModel {
 
     private final LiveData<List<Group_Chat>> all_groups;
@@ -47,8 +50,8 @@ public class Groups_chat_ViewModel extends AndroidViewModel {
    public Group_Chat selectChat(String id){
         return repository.selectChat(id);
    };
-    public LiveData<PagingData<Group_Chat>> getMessageBy_paging(String group_id,boolean is_fistpage) {
-        return repository.getChat_byPaging(group_id,this, is_fistpage);
+    public void getMessageBy_paging(String group_id, boolean is_fistpage, LiveData_Messages<Group_Chat> chatLiveData_list) {
+         repository.getChat_byPaging(group_id,this, is_fistpage,chatLiveData_list);
     }
     public  LiveData<List<Group_Chat>> getMessage(String group_id) {
         return repository.getChat(group_id);

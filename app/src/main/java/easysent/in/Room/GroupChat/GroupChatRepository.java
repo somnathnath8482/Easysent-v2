@@ -13,6 +13,8 @@ import androidx.paging.PagingLiveData;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import easysent.in.Interface.Messages.LiveData_Item;
+import easysent.in.Interface.Messages.LiveData_Messages;
 import kotlinx.coroutines.CoroutineScope;
 
 public class GroupChatRepository {
@@ -68,16 +70,10 @@ public class GroupChatRepository {
         return user;
     }
 
-    public LiveData<PagingData<Group_Chat>> getChat_byPaging(String group_id, Groups_chat_ViewModel groups_chat_viewModel,boolean st) {
-        LiveData<PagingData<Group_Chat>> Chats = null;
-        try {
-            Chats = new searchAsyncPaged(Chat_dao,groups_chat_viewModel,st).execute(group_id).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return Chats;
+    public void getChat_byPaging(String group_id, Groups_chat_ViewModel groups_chat_viewModel, boolean st, LiveData_Messages<Group_Chat> chatLiveData_list) {
+
+            new  searchAsyncPaged(Chat_dao,groups_chat_viewModel,st,chatLiveData_list).execute(group_id);
+
     }
 
     public LiveData<List<Group_Chat>> getChat(String group_id) {
@@ -214,11 +210,12 @@ public class GroupChatRepository {
         private final Groups_Chats_dao Chat_dao;
         private final Groups_chat_ViewModel groups_chat_viewModel;
         private final boolean st;
-
-        private searchAsyncPaged(Groups_Chats_dao Chat_dao, Groups_chat_ViewModel groups_chat_viewModel, boolean st) {
+        LiveData_Messages<Group_Chat> chatLiveData_list;
+        private searchAsyncPaged(Groups_Chats_dao Chat_dao, Groups_chat_ViewModel groups_chat_viewModel, boolean st, LiveData_Messages<Group_Chat> chatLiveData_list) {
             this.Chat_dao = Chat_dao;
             this.groups_chat_viewModel = groups_chat_viewModel;
             this.st = st;
+            this.chatLiveData_list = chatLiveData_list;
         }
 
         @Override
@@ -242,6 +239,12 @@ public class GroupChatRepository {
             return all_chat_paged;
 
 
+        }
+
+        @Override
+        protected void onPostExecute(LiveData<PagingData<Group_Chat>> pagingDataLiveData) {
+            super.onPostExecute(pagingDataLiveData);
+            chatLiveData_list.allMessage(pagingDataLiveData);
         }
     }
 
