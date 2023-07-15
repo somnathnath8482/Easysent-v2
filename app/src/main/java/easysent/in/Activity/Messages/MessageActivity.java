@@ -9,7 +9,6 @@ import static easysent.in.Helper.ExifUtils.getRotatedBitmap;
 import static easysent.in.Helper.SyncData.SyncBlock;
 import static easysent.in.Helper.SyncData.SyncThread;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -33,6 +32,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagingData;
@@ -54,11 +54,9 @@ import org.json.JSONObject;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TimeZone;
 
 import easysent.in.Adapter.MessageNewAdapter;
@@ -73,6 +71,8 @@ import easysent.in.Helper.MethodClass;
 import easysent.in.Helper.ShareData;
 import easysent.in.Helper.SharePref.PreferenceFile;
 import easysent.in.Interface.AllInterFace;
+import easysent.in.Interface.Messages.LiveData_Item;
+import easysent.in.Interface.Messages.LiveData_Messages;
 import easysent.in.Interface.Response;
 import easysent.in.R;
 import easysent.in.Response.Login.User;
@@ -150,40 +150,45 @@ public class MessageActivity extends AppCompatActivity {
         binding.recycler.setHasFixedSize(true);
         binding.recycler.setAdapter(adapter);
 
-        message_view_model.getChat_By_Paged(reciver, PreferenceFile.getUser().getUser().getId()).observe(this, new Observer<PagingData<Chats>>() {
+        message_view_model.getChat_By_Paged(reciver, PreferenceFile.getUser().getUser().getId(), new LiveData_Messages<Chats>() {
             @Override
-            public void onChanged(PagingData<Chats> chatsPagingData) {
-                Log.e("TAG", "onChanged: ");
-                adapter.submitData(getLifecycle(), chatsPagingData);
-                String TAG = "NEW_ITEM";
-                adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-
+            public void allMessage(LiveData<PagingData<Chats>> messages) {
+                messages.observe(MessageActivity.this, new Observer<PagingData<Chats>>() {
                     @Override
-                    public void onItemRangeInserted(int positionStart, int itemCount) {
-                        super.onItemRangeInserted(positionStart, itemCount);
-                        Log.e(TAG, "onItemRangeInserted: start" + positionStart + " icount " + itemCount);
+                    public void onChanged(PagingData<Chats> chatsPagingData) {
+                        Log.e("TAG", "onChanged: ");
+                        adapter.submitData(getLifecycle(), chatsPagingData);
+                        String TAG = "NEW_ITEM";
+                        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
 
-                        binding.recycler.smoothScrollToPosition(positionStart + itemCount);
-                        total = adapter.snapshot().size();
-                        thread = adapter.snapshot().get(0).getThread();
+                            @Override
+                            public void onItemRangeInserted(int positionStart, int itemCount) {
+                                super.onItemRangeInserted(positionStart, itemCount);
+                                Log.e(TAG, "onItemRangeInserted: start" + positionStart + " icount " + itemCount);
+                                binding.recycler.smoothScrollToPosition(positionStart + itemCount);
+                                total = adapter.snapshot().size();
+                                thread = adapter.snapshot().get(0).getThread();
 
-                        thread_viewModel.UpdateUnread(thread);
+                                thread_viewModel.UpdateUnread(thread);
+                            }
+
+                            @Override
+                            public void onItemRangeChanged(int positionStart, int itemCount) {
+                                super.onItemRangeChanged(positionStart, itemCount);
+                                Log.e(TAG, "onItemRangeChanged: start" + positionStart + " icount " + itemCount);
+
+
+                            }
+
+
+                        });
+
+
                     }
-
-                    @Override
-                    public void onItemRangeChanged(int positionStart, int itemCount) {
-                        super.onItemRangeChanged(positionStart, itemCount);
-                        Log.e(TAG, "onItemRangeChanged: start" + positionStart + " icount " + itemCount);
-
-
-                    }
-
-
                 });
-
-
             }
         });
+
         ItemTouchHelper.SimpleCallback call_tocach = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -385,121 +390,122 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void Init() {
-        userVewModel.selectUserLive(reciver).observe(this, new Observer<Users>() {
-            @Override
-            public void onChanged(Users user) {
-                updateImage(user.getProfilePic(), user.getName());
-                reciver_name = user.getName();
-                binding.btnSend.setOnClickListener(view14 -> {
-                    String mid = Calendar.getInstance().getTimeInMillis() + "";
-                    if (filePath.equals("") && binding.textSend.getText().toString().trim().equals("")) {
-                        Toast.makeText(activity, "You Can't Send Empty Message", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Encripter encripter = new Encripter(PreferenceFile.getUser().getUser().getId());
+        userVewModel.selectUserLive(reciver, item -> item.observe(MessageActivity.this, new Observer<Users>() {
+          @Override
+          public void onChanged(Users user) {
+              updateImage(user.getProfilePic(), user.getName());
+              reciver_name = user.getName();
+              binding.btnSend.setOnClickListener(view14 -> {
+                  String mid = Calendar.getInstance().getTimeInMillis() + "";
+                  if (filePath.equals("") && binding.textSend.getText().toString().trim().equals("")) {
+                      Toast.makeText(activity, "You Can't Send Empty Message", Toast.LENGTH_SHORT).show();
+                  } else {
+                      Encripter encripter = new Encripter(PreferenceFile.getUser().getUser().getId());
 
-                        try {
-                            String message = encripter.encrypt(binding.textSend.getText().toString().trim());
-                            String sender = PreferenceFile.getUser().getUser().getId();
-                            String email = PreferenceFile.getUser().getUser().getEmail();
-                            if (fileType.equalsIgnoreCase("II")) {
-                                CustomProgressbar.showProgressBar(activity, false);
-                                MethodClass.cashattachmentImage2(selected_bitmap, mid, handler, activity, new AllInterFace() {
-                                    @Override
-                                    public void IsClicked(String s) {
-                                        super.IsClicked(s);
-                                        if (s == null) {
+                      try {
+                          String message = encripter.encrypt(binding.textSend.getText().toString().trim());
+                          String sender = PreferenceFile.getUser().getUser().getId();
+                          String email = PreferenceFile.getUser().getUser().getEmail();
+                          if (fileType.equalsIgnoreCase("II")) {
+                              CustomProgressbar.showProgressBar(activity, false);
+                              MethodClass.cashattachmentImage2(selected_bitmap, mid, handler, activity, new AllInterFace() {
+                                  @Override
+                                  public void IsClicked(String s) {
+                                      super.IsClicked(s);
+                                      if (s == null) {
 
-                                            binding.layAttach.setVisibility(View.GONE);
-                                            filePath = "";
-                                            fileType = "";
-                                            binding.textSend.setText("");
-                                            Toast.makeText(activity, "Unable to sent attachment", Toast.LENGTH_SHORT).show();
+                                          binding.layAttach.setVisibility(View.GONE);
+                                          filePath = "";
+                                          fileType = "";
+                                          binding.textSend.setText("");
+                                          Toast.makeText(activity, "Unable to sent attachment", Toast.LENGTH_SHORT).show();
 
-                                        } else {
-                                            filePath = s;
-                                            //Toast.makeText(activity,filePath, Toast.LENGTH_SHORT).show();
-                                            SendMessage(sender, reciver, message, activity, email, mid);
-                                        }
+                                      } else {
+                                          filePath = s;
+                                          //Toast.makeText(activity,filePath, Toast.LENGTH_SHORT).show();
+                                          SendMessage(sender, reciver, message, activity, email, mid);
+                                      }
 
-                                    }
-                                });
-                                CustomProgressbar.hideProgressBar();
+                                  }
+                              });
+                              CustomProgressbar.hideProgressBar();
 
-                            } else if (fileType.equalsIgnoreCase("P") || fileType.equalsIgnoreCase("V") || fileType.equalsIgnoreCase("D")) {
+                          } else if (fileType.equalsIgnoreCase("P") || fileType.equalsIgnoreCase("V") || fileType.equalsIgnoreCase("D")) {
 
-                                CustomProgressbar.showProgressBar(activity, false);
-                                MethodClass.cashattachmentFILE2(new File(filePath), mid, handler, activity, new AllInterFace() {
-                                    @Override
-                                    public void IsClicked(String s) {
-                                        super.IsClicked(s);
-                                        if (s == null) {
+                              CustomProgressbar.showProgressBar(activity, false);
+                              MethodClass.cashattachmentFILE2(new File(filePath), mid, handler, activity, new AllInterFace() {
+                                  @Override
+                                  public void IsClicked(String s) {
+                                      super.IsClicked(s);
+                                      if (s == null) {
 
-                                            binding.layAttach.setVisibility(View.GONE);
-                                            filePath = "";
-                                            fileType = "";
-                                            binding.textSend.setText("");
-                                            Toast.makeText(activity, "Unable to sent attachment", Toast.LENGTH_SHORT).show();
+                                          binding.layAttach.setVisibility(View.GONE);
+                                          filePath = "";
+                                          fileType = "";
+                                          binding.textSend.setText("");
+                                          Toast.makeText(activity, "Unable to sent attachment", Toast.LENGTH_SHORT).show();
 
-                                        } else {
-                                            filePath = s;
-                                            //Toast.makeText(activity,filePath, Toast.LENGTH_SHORT).show();
-                                            SendMessage(sender, reciver, message, activity, email, mid);
-                                        }
+                                      } else {
+                                          filePath = s;
+                                          //Toast.makeText(activity,filePath, Toast.LENGTH_SHORT).show();
+                                          SendMessage(sender, reciver, message, activity, email, mid);
+                                      }
 
-                                    }
-                                });
-                                CustomProgressbar.hideProgressBar();
-
-
-                            } else {
-                                SendMessage(sender, reciver, message, activity, email, mid);
-                            }
-                            binding.textSend.setText("");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                });
-                ;
-                binding.attach.setOnClickListener(view1 -> {
-                    AddAttachMent();
-
-                });
+                                  }
+                              });
+                              CustomProgressbar.hideProgressBar();
 
 
-                if (user != null) {
-                    token = user.getToken();
-                    mainToolbarBinding.name.setText(user.getName());
-                    mainToolbarBinding.email.setText(user.getFstatus());
+                          } else {
+                              SendMessage(sender, reciver, message, activity, email, mid);
+                          }
+                          binding.textSend.setText("");
+                      } catch (Exception e) {
+                          e.printStackTrace();
+                      }
+                  }
 
-                    if (user.getProfilePic() != null && !user.getProfilePic().equals("null")) {
-                        Glide.with(activity).load(BASE_URL + "profile_image/" + user.getProfilePic()).thumbnail(0.05f).transition(DrawableTransitionOptions.withCrossFade()).addListener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                mainToolbarBinding.profileImage.setImageDrawable(activity.getResources().getDrawable(MethodClass.getResId(user.getName(), R.drawable.class)));
-                                return true;
-                            }
+              });
+              ;
+              binding.attach.setOnClickListener(view1 -> {
+                  AddAttachMent();
 
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-
-                                mainToolbarBinding.profileImage.setImageDrawable(resource);
-                                return false;
-                            }
-                        }).into(mainToolbarBinding.profileImage);
-                    } else {
-                        mainToolbarBinding.profileImage.setImageDrawable(activity.getResources().getDrawable(MethodClass.getResId(user.getName(), R.drawable.class)));
-                    }
-
-                } else {
-                    mainToolbarBinding.back.performClick();
-                    Toast.makeText(activity, "Something Went Wrong", Toast.LENGTH_SHORT).show();
-                }
+              });
 
 
-            }
-        });
+              if (user != null) {
+                  token = user.getToken();
+                  mainToolbarBinding.name.setText(user.getName());
+                  mainToolbarBinding.email.setText(user.getFstatus());
+
+                  if (user.getProfilePic() != null && !user.getProfilePic().equals("null")) {
+                      Glide.with(activity).load(BASE_URL + "profile_image/" + user.getProfilePic()).thumbnail(0.05f).transition(DrawableTransitionOptions.withCrossFade()).addListener(new RequestListener<Drawable>() {
+                          @Override
+                          public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                              mainToolbarBinding.profileImage.setImageDrawable(activity.getResources().getDrawable(MethodClass.getResId(user.getName(), R.drawable.class)));
+                              return true;
+                          }
+
+                          @Override
+                          public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
+                              mainToolbarBinding.profileImage.setImageDrawable(resource);
+                              return false;
+                          }
+                      }).into(mainToolbarBinding.profileImage);
+                  } else {
+                      mainToolbarBinding.profileImage.setImageDrawable(activity.getResources().getDrawable(MethodClass.getResId(user.getName(), R.drawable.class)));
+                  }
+
+              } else {
+                  mainToolbarBinding.back.performClick();
+                  Toast.makeText(activity, "Something Went Wrong", Toast.LENGTH_SHORT).show();
+              }
+
+
+          }
+      }));
+
 
 
         if (pickFile != null) pickFile.setOnselect(new Onselect() {

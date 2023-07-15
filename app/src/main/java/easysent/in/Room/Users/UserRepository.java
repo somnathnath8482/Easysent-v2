@@ -9,6 +9,8 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import easysent.in.Interface.Messages.LiveData_Item;
+
 public class UserRepository {
     private final UserDao userDao;
     private final LiveData<List<Users>> allUser;
@@ -73,13 +75,10 @@ public class UserRepository {
         }
         return user ;
     }
-    public   LiveData<Users>  selectUserLive(String uid) {
-        LiveData<Users>  user = null;
-        try{ user = new SelectUserLiveAsync(userDao).execute(uid).get();}
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return user ;
+    public   void selectUserLive(String uid, LiveData_Item<Users> liveData_item) {
+
+         new SelectUserLiveAsync(userDao,liveData_item).execute(uid);
+
     }
 
     public  LiveData<List<Users>> search(String Name_Or_Email){
@@ -228,9 +227,12 @@ public class UserRepository {
     }
     private static class SelectUserLiveAsync extends AsyncTask<String,Void,  LiveData<Users> > {
         private final UserDao userDao;
+        private final LiveData_Item<Users> liveData_item;
 
-        private SelectUserLiveAsync(UserDao userDao) {
+
+        private SelectUserLiveAsync(UserDao userDao, LiveData_Item<Users> liveData_item) {
             this.userDao = userDao;
+            this.liveData_item = liveData_item;
         }
 
 
@@ -238,6 +240,12 @@ public class UserRepository {
         protected   LiveData<Users>  doInBackground(String... strings) {
 
             return userDao.selectUserlive(strings[0]);
+        }
+
+        @Override
+        protected void onPostExecute(LiveData<Users> usersLiveData) {
+            super.onPostExecute(usersLiveData);
+            liveData_item.onItem(usersLiveData);
         }
     }
 
@@ -254,6 +262,8 @@ public class UserRepository {
             return userDao.search(strings[0]);
         }
     }
+
+
 
 
 }

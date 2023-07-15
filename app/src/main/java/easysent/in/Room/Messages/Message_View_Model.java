@@ -5,10 +5,10 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.paging.PagedList;
-import androidx.paging.PagingData;
 
 import java.util.List;
+
+import easysent.in.Interface.Messages.LiveData_Messages;
 
 public class Message_View_Model extends AndroidViewModel {
     private final Chatepository repository;
@@ -64,8 +64,8 @@ public class Message_View_Model extends AndroidViewModel {
         return repository.getChat_User(user, me);
     }
 
-    public LiveData<PagingData<Chats>> getChat_By_Paged(String user, String me) {
-        return repository.getChat_byPaging(user, me,Message_View_Model.this);
+    public void getChat_By_Paged(String user, String me, LiveData_Messages<Chats> liveData_messages) {
+         repository.getChat_byPaging(user, me,Message_View_Model.this,liveData_messages);
     }
 
     public LiveData<List<Chats>> getAll() {

@@ -30,7 +30,7 @@ public interface Thread_dao {
     Message_Thread selectthread(String id);
 
     /*@Query("SELECT * FROM Message_Thread WHERE sender =:id Or reciver=:id")
-    LiveData<List<Message_Thread>>  getActiveThread(String id);*/
+    LiveData_Messages<List<Message_Thread>>  getActiveThread(String id);*/
 
     //@Query("select *  from Users  U   join message_thread T on u.user_id =:id AND (T.sender=:id or T.reciver = :id)")
     @Query("select *  from Users  U   join message_thread T on ( T.sender==:id AND   u.user_id = T.reciver  ) OR  ( T.reciver =:id AND   u.user_id = T.sender  ) order by last_message_time DESC")

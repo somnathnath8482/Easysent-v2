@@ -7,6 +7,8 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
+import easysent.in.Interface.Messages.LiveData_Item;
+
 public class UserVewModel extends AndroidViewModel {
     private final LiveData<List<Users>> alluser;
     private final UserRepository repository;
@@ -50,8 +52,8 @@ public class UserVewModel extends AndroidViewModel {
         return repository.selectUser(uid);
     }
 
-    public   LiveData<Users>  selectUserLive(String uid) {
-        return repository.selectUserLive(uid);
+    public  void   selectUserLive(String uid,  LiveData_Item<Users> liveData_item) {
+         repository.selectUserLive(uid,liveData_item);
     }
 
     public  LiveData<List<Users>> search(String Name_Or_Email) {

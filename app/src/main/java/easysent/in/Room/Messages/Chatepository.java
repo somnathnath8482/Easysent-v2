@@ -13,7 +13,7 @@ import androidx.paging.PagingLiveData;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import easysent.in.Room.GroupChat.Group_Chat;
+import easysent.in.Interface.Messages.LiveData_Messages;
 import kotlinx.coroutines.CoroutineScope;
 
 public class Chatepository {
@@ -93,16 +93,11 @@ public class Chatepository {
         return Chats;
     }
 
-    public LiveData<PagingData<Chats>>getChat_byPaging(String user, String me, Message_View_Model message_view_model){
-        LiveData<PagingData<Chats>> Chats = null;
-        try {
-            Chats = new searchAsyncPaged(Chat_dao,message_view_model).execute(user,me).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return Chats;
+    public void getChat_byPaging(String user, String me, Message_View_Model message_view_model,
+                                                       LiveData_Messages<Chats> liveData_messages){
+            new searchAsyncPaged(Chat_dao, message_view_model, liveData_messages).execute(user,me);
+
+
     }
 
 
@@ -257,10 +252,12 @@ public class Chatepository {
     public static class searchAsyncPaged extends AsyncTask<String,Void, LiveData<PagingData<Chats>> >{
         private final Chat_dao Chat_dao;
         private final Message_View_Model message_view_model;
+        private  LiveData_Messages<Chats> liveData_messages;
 
-        private searchAsyncPaged(Chat_dao Chat_dao, Message_View_Model message_view_model) {
+        private searchAsyncPaged(Chat_dao Chat_dao, Message_View_Model message_view_model,LiveData_Messages<Chats> liveData_messages) {
             this.Chat_dao = Chat_dao;
             this.message_view_model = message_view_model;
+            this.liveData_messages = liveData_messages;
         }
 
         @Override
@@ -283,6 +280,12 @@ public class Chatepository {
             all_chat_paged = PagingLiveData.cachedIn(PagingLiveData.getLiveData(pager), coroutineScope);
 
             return all_chat_paged;
+        }
+
+        @Override
+        protected void onPostExecute(LiveData<PagingData<Chats>> pagingDataLiveData) {
+            super.onPostExecute(pagingDataLiveData);
+            liveData_messages.allMessage(pagingDataLiveData);
         }
     }
 
