@@ -35,6 +35,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -43,6 +44,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 import easysent.in.BuildConfig;
 import easysent.in.Helper.MethodClass;
@@ -588,8 +590,7 @@ public class MessageNewAdapter extends PagingDataAdapter<Chats, MessageNewAdapte
 
             File file = new File(CATCH_DIR2 + "/" + item.getAttachment());
             if (file.exists()) {
-                Glide.with(context).load(file.getAbsolutePath())
-                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).into(holder.iv_attachment);
+            new MethodClass.GetFileBitmap(file.getAbsolutePath(),holder.iv_attachment,context).execute();
 
             } else {
                 Glide.with(context).load(BASE_URL + "Attachment/" + item.getAttachment())

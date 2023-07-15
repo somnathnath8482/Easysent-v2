@@ -576,9 +576,7 @@ public class GroupChatNewAdapter extends PagingDataAdapter<Group_Chat, GroupChat
 
             File file = new File(CATCH_DIR2 + "/" + item.getAttachment());
             if (file.exists()) {
-                Glide.with(context).load(file.getAbsolutePath())
-                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).into(holder.iv_attachment);
-
+                new MethodClass.GetFileBitmap(file.getAbsolutePath(),holder.iv_attachment,context).execute();
             } else {
                 Glide.with(context).load(BASE_URL + "Attachment/Groups/" + item.getAttachment())
                         .thumbnail(0.05f)

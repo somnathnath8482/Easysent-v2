@@ -56,6 +56,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.FutureTarget;
 import com.google.gson.Gson;
 import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
@@ -89,6 +91,7 @@ import java.util.Random;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1271,27 +1274,6 @@ public class MethodClass {
             @Override
             public void run() {
                 File file = new File(CATCH_DIR2 + "/" + s1);
-
-                /*if (file.exists()){
-                    file.deleteOnExit();
-                }
-
-                try {
-                    file.createNewFile();
-                    URL url = new URL(s);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setDoInput(true);
-                    connection.connect();
-                    InputStream input = connection.getInputStream();
-                    FileOutputStream out = new FileOutputStream(file);
-                    copyStream(input, out);
-                    out.close();
-
-                } catch (Exception e){
-                    e.printStackTrace();
-                    file.delete();
-                }*/
-
                 new GetFile(file, s).execute();
             }
         });
@@ -1419,6 +1401,41 @@ public class MethodClass {
             return null;
         }
     }
+ public static class GetFileBitmap extends AsyncTask<Void, Void, Bitmap> {
+
+        String path;
+        ImageView imageView;
+
+        Context context;
+
+     public GetFileBitmap(String path, ImageView imageView, Context context) {
+         this.path = path;
+         this.imageView = imageView;
+         this.context = context;
+     }
+
+     @Override
+        protected Bitmap doInBackground(Void... voids) {
+         FutureTarget<Bitmap> futureTarget = Glide.with(context)
+                 .asBitmap()
+                 .override(600, 600)
+                 .load(path)
+                 .submit();
+         try {
+             return futureTarget.get();
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+         return null;
+     }
+
+     @Override
+     protected void onPostExecute(Bitmap bitmap) {
+         super.onPostExecute(bitmap);
+         if (bitmap!=null)
+         imageView.setImageBitmap(bitmap);
+     }
+ }
 
     public static void GetPermission(FragmentActivity activity, String[] storage_permission, int i) {
         activity.requestPermissions(storage_permission, 122);
