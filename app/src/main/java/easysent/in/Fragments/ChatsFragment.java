@@ -11,9 +11,14 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+
+import java.util.List;
 
 import easysent.in.Adapter.ChatThreadAdapter;
 import easysent.in.Helper.SharePref.PreferenceFile;
+import easysent.in.Interface.Messages.LiveDatanonPage;
+import easysent.in.Room.Threads.Active_Thread;
 import easysent.in.Room.Threads.Thread_ViewModel;
 import easysent.in.databinding.FragmentChatsBinding;
 
@@ -44,7 +49,12 @@ public class ChatsFragment extends Fragment {
         binding.recycler.setHasFixedSize(true);
         ChatThreadAdapter adapter  =new ChatThreadAdapter(getContext(),handler);
         binding.recycler.setAdapter(adapter);
-        thread_viewModel.getActiveThreds(PreferenceFile.getUser().getUser().getId()).observe(getViewLifecycleOwner(), adapter::submitList);
+        thread_viewModel.getActiveThreds(PreferenceFile.getUser().getUser().getId(), new LiveDatanonPage<Active_Thread>() {
+            @Override
+            public void allMessage(LiveData<List<Active_Thread>> messages) {
+           messages.observe(getViewLifecycleOwner(), adapter::submitList);
+            }
+        });
     }
 
 

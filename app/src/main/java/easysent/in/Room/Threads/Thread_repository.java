@@ -5,10 +5,11 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
+import easysent.in.Interface.Messages.LiveData_Messages;
+import easysent.in.Interface.Messages.LiveDatanonPage;
 import easysent.in.Room.Users.UserDatabase;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class Thread_repository {
 
@@ -60,16 +61,8 @@ public class Thread_repository {
         return user ;
     }
 
-    public LiveData<List<Active_Thread>> getActiveThread(String Name_Or_Email){
-        LiveData<List<Active_Thread>>  Message_Thread = null;
-        try {
-            Message_Thread = new searchAsync(thread_dao).execute(Name_Or_Email).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return Message_Thread;
+    public void getActiveThread(String Name_Or_Email, LiveDatanonPage<Active_Thread> live_data){
+        new searchAsync(thread_dao,live_data).execute(Name_Or_Email);
     }
     public LiveData<List<Message_Thread>> getAll() {
         return all_threads;
@@ -170,15 +163,23 @@ private static class UpdateUnreadAsync extends AsyncTask<String, Void, Void> {
 
     public static class searchAsync extends AsyncTask<String,Void,LiveData<List<Active_Thread>> >{
         private final Thread_dao Thread_dao;
+        private final LiveDatanonPage<Active_Thread> livedata;
 
-        private searchAsync(Thread_dao Thread_dao) {
+        private searchAsync(Thread_dao Thread_dao, LiveDatanonPage<Active_Thread> live_data) {
             this.Thread_dao = Thread_dao;
+            this.livedata = live_data;
         }
 
         @Override
         protected LiveData<List<Active_Thread>>  doInBackground(String... strings) {
 
             return Thread_dao.getActiveThread(strings[0]);
+        }
+
+        @Override
+        protected void onPostExecute(LiveData<List<Active_Thread>> listLiveData) {
+            super.onPostExecute(listLiveData);
+            livedata.allMessage(listLiveData);
         }
     }
     

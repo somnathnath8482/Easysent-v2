@@ -7,6 +7,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import java.util.List;
 
+import easysent.in.Interface.Messages.LiveData_Messages;
+import easysent.in.Interface.Messages.LiveDatanonPage;
+
 public class Thread_ViewModel  extends AndroidViewModel {
 
     private final LiveData<List<Message_Thread>> all_threads;
@@ -43,8 +46,8 @@ public class Thread_ViewModel  extends AndroidViewModel {
         return repository.selectThread(uid);
     }
 
-    public LiveData<List<Active_Thread>>  getActiveThreds(String id) {
-        return repository.getActiveThread(id);
+    public void getActiveThreds(String id, LiveDatanonPage<Active_Thread> live_data) {
+         repository.getActiveThread(id,live_data);
     }
 
     public LiveData<List<Message_Thread>> getAll() {
