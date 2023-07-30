@@ -1,9 +1,8 @@
-package easysent.in.Helper;
+package easysent.in.Firebase;
 
 import static android.app.Notification.BADGE_ICON_SMALL;
 
 import android.annotation.SuppressLint;
-import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,24 +11,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
-import easysent.in.Activity.LoginActivity;
+import java.util.Random;
 
+import easysent.in.Activity.LoginActivity;
 import easysent.in.R;
 
-import java.util.Random;
 
 public class ShowNotification {
 
-    public void showNotification(Application application, int id, String message, String name, Bitmap bitmap) {
+    @SuppressLint("UnspecifiedImmutableFlag")
+    public void showNotification(FirebaseMessaging application, int id, String message, String name, Bitmap bitmap) {
 
         Intent intent = new Intent();
 
-        intent = new Intent(application, LoginActivity.class);
+        intent = new Intent(application.getApplicationContext(), LoginActivity.class);
         String channel_id = "notification_channel";
-        PendingIntent pendingIntent = PendingIntent.getActivity(application, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            pendingIntent = PendingIntent.getActivity
+                    (application, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        }
+        else
+        {
+            pendingIntent = PendingIntent.getActivity
+                    (application, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        }
 
         @SuppressLint("WrongConstant") NotificationCompat.Builder builder
                 = new NotificationCompat

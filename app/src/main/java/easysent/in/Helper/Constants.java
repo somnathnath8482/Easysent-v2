@@ -2,7 +2,7 @@ package easysent.in.Helper;
 
 public class Constants {
     public static final String FIREBASE_TOKEN = "FIREBASE_TOKEN";
-    public static final String FIREBASE_AUTH = "";
+    public static final String FIREBASE_AUTH = "key=AAAAJEiMlnc:APA91bEAaVGyZK7c5bHjPGN7BqbuVonPTlNYgLpa22mG3F7LJw6yzRMN0riQxLwffvhjRrBYG45vT2af3WEp46ffoxStXikM63ONsqODdVeB3IJpSMrci6_PBG0fvMxnjYkKT3recER8";
 
 
     public static final String Home_URL = "https://easysent.in/";

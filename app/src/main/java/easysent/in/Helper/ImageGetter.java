@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.target.Target;
 
 import java.io.ByteArrayOutputStream;
@@ -23,16 +24,25 @@ public class ImageGetter extends AsyncTask<File, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(File... params) {
         Bitmap bitmap = decodeFile(params[0].getAbsolutePath());
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-        return bitmap;
+        if (bitmap.getHeight() > 4096 || bitmap.getWidth() > 4096) {
+            int width = (int) (bitmap.getWidth() * 0.9);
+            int height = (int) (bitmap.getHeight() * 0.9);
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+
+            return resizedBitmap;
+        } else {
+            return bitmap;
+        }
     }
     @Override
     protected void onPostExecute(Bitmap result) {
         super.onPostExecute(result);
-        //iv.setImageBitmap(result);
+
         try {
-            Glide.with(iv.getContext()).load(result).thumbnail(0.01f).diskCacheStrategy(DiskCacheStrategy.NONE).into(iv);
+            if (result!=null)
+            Glide.with(iv.getContext())
+                    .load(result)
+                    .into(iv);
         } catch (Exception e) {
             e.printStackTrace();
         }

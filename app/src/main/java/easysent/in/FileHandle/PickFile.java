@@ -4,12 +4,15 @@ import static android.app.Activity.RESULT_OK;
 
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -292,20 +295,21 @@ public class PickFile {
                                     onselect.onSelect(file.getName(), file.getAbsolutePath());
                                 }
                             } else {
-                                Toast.makeText(context, "File selection failed", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "existing File selection failed", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
 
 
                 } else if (returnUri.getScheme().equalsIgnoreCase("content")) {
-                    DocumentFile documentFile = DocumentFile.fromSingleUri(context, returnUri);
+                    //DocumentFile documentFile = DocumentFile.fromSingleUri(context, returnUri);
 
+                    String name  =  getName(context.getContentResolver(),returnUri);
 
-                    if (documentFile != null && documentFile.exists()) {
+                    if (name != null ) {
 
                         String path = new File(context.getFilesDir(), "").getAbsolutePath(); // remove "Image" from child
-                        File file = new File(path + "/" + documentFile.getName());
+                        File file = new File(path + "/" + name);
 
 
                         try {
@@ -328,10 +332,10 @@ public class PickFile {
                                 public void run() {
                                     if (file.exists()) {
                                         if (onselect!=null) {
-                                            onselect.onSelect(documentFile.getName(), file.getAbsolutePath());
+                                            onselect.onSelect(name, file.getAbsolutePath());
                                         }
                                     } else {
-                                        Toast.makeText(context, "File selection failed", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "no file", Toast.LENGTH_SHORT).show();
                                     }
 
                                 }
@@ -347,7 +351,7 @@ public class PickFile {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(context, "File selection failed", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "File creation failed", Toast.LENGTH_SHORT).show();
                             }
                         });
 
@@ -373,6 +377,15 @@ public class PickFile {
         out.close();
     }
 
-
+    private String getName(ContentResolver resolver, Uri uri) {
+        Cursor returnCursor =
+                resolver.query(uri, null, null, null, null);
+        assert returnCursor != null;
+        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        returnCursor.moveToFirst();
+        String name = returnCursor.getString(nameIndex);
+        returnCursor.close();
+        return name;
+    }
 
 }

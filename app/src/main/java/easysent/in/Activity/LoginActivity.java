@@ -2,6 +2,7 @@ package easysent.in.Activity;
 
 import static easysent.in.Helper.Constants.FIREBASE_TOKEN;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
 
@@ -15,6 +16,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -124,6 +128,17 @@ Activity activity;
     @Override
     protected void onResume() {
         super.onResume();
+
+        try {
+            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null && !task.getResult().equals("")) {
+                    PreferenceFile.setData(task.getResult(), FIREBASE_TOKEN);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (PreferenceFile.isLogged()) {
             if (PreferenceFile.getFingirAuth()) {
                 //Enable();

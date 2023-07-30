@@ -4,7 +4,6 @@ import static easysent.in.Helper.Constants.BASE_URL;
 import static easysent.in.Helper.Constants.CATCH_DIR;
 import static easysent.in.Helper.Constants.CATCH_DIR2;
 import static easysent.in.Helper.Constants.GET_IP;
-import static easysent.in.Helper.Constants.LOGIN_HISTORY;
 import static easysent.in.Helper.Constants.LOGOUT;
 
 import android.Manifest;
@@ -58,6 +57,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
@@ -91,14 +91,12 @@ import java.util.Random;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import easysent.in.Activity.LoginActivity;
 import easysent.in.Adapter.Attachment_viewpager;
 import easysent.in.Adapter.Group_Attachment_viewpager;
-import easysent.in.Firebase.Data;
 import easysent.in.Firebase.Sender;
 import easysent.in.Helper.SharePref.PreferenceFile;
 import easysent.in.Interface.AllInterFace;
@@ -206,7 +204,7 @@ public class MethodClass {
         }
     }
 
-    public static void logout(Activity activity, Handler handler,String id) {
+    public static void logout(Activity activity, Handler handler, String id) {
 
         Message_View_Model message_view_model = ViewModelProviders.of((FragmentActivity) activity).get(Message_View_Model.class);
         Thread_ViewModel thread_viewModel = ViewModelProviders.of((FragmentActivity) activity).get(Thread_ViewModel.class);
@@ -232,12 +230,15 @@ public class MethodClass {
                             public void onResponse(JSONObject res) {
 
                             }
-                        }, BASE_URL + LOGOUT, activity.getApplication(), handler,"", map);
+                        }, BASE_URL + LOGOUT, activity.getApplication(), handler, "", map);
                         lottieAlertDialog.dismiss();
-                        String type = "STATUS";
+                        //todo
+                      /*  String type = "STATUS";
                         Data data = new Data(type, PreferenceFile.getUser().getUser().getId(), "off");
-                        Sender se = new Sender(data, "/topics/EASY_ALL");
-                        MethodClass.SendNotificationOnTopic(se, activity.getApplication(), handler);
+                        Message message1 = new Message(data, "/topics/EASY_ALL");
+
+                        Sender se = new Sender(false, message1);
+                        MethodClass.SendNotificationOnTopic(se, activity.getApplication(), handler);*/
                         thread_viewModel.deleteAll();
                         message_view_model.deleteAll();
                         blockViewModel.deleteAll();
@@ -802,25 +803,19 @@ public class MethodClass {
     }
 
     public static void SendNotification(Sender sender, Application activity, Handler handler) {
-        Log.e("TAG", "SendNotification: " + sender.toString());
+        Log.e("TAG", "SendNotification: before sent " + sender.toString());
         if (!NetWorkChecker.check(activity, handler)) {
             return;
         }
 
-        Main main = new Main(activity, handler, new OnError() {
+
+         Main main = new Main(activity, handler, new OnError() {
             @Override
             public void OnEror(String url, String code, String message) {
                 Log.d("TAG", "OnEror: SendNotification ");
 
             }
-        }, new OnSuccess() {
-            @Override
-            public void OnSucces(String url, String code, String res) {
-                Log.d("TAG", "OnSucces: SendNotification " + sender.data.getMessage() + " " + sender.data.getMessage());
-
-
-            }
-        });
+        }, (url, code, res) -> Log.d("TAG", "OnSucces: SendNotification "+ " " + sender.data.getMessage()));
 
         Gson gson = new Gson();
         String jsonString = gson.toJson(sender);
@@ -1401,41 +1396,43 @@ public class MethodClass {
             return null;
         }
     }
- public static class GetFileBitmap extends AsyncTask<Void, Void, Bitmap> {
+
+    public static class GetFileBitmap extends AsyncTask<Void, Void, Bitmap> {
 
         String path;
         ImageView imageView;
 
         Context context;
 
-     public GetFileBitmap(String path, ImageView imageView, Context context) {
-         this.path = path;
-         this.imageView = imageView;
-         this.context = context;
-     }
+        public GetFileBitmap(String path, ImageView imageView, Context context) {
+            this.path = path;
+            this.imageView = imageView;
+            this.context = context;
+        }
 
-     @Override
+        @Override
         protected Bitmap doInBackground(Void... voids) {
-         FutureTarget<Bitmap> futureTarget = Glide.with(context)
-                 .asBitmap()
-                 .override(600, 600)
-                 .load(path)
-                 .submit();
-         try {
-             return futureTarget.get();
-         } catch (Exception e) {
-             e.printStackTrace();
-         }
-         return null;
-     }
+            FutureTarget<Bitmap> futureTarget = Glide.with(context)
+                    .asBitmap()
+                    .override(600, 600)
+                    .load(path)
+                    .submit();
+            try {
+                return futureTarget.get();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
 
-     @Override
-     protected void onPostExecute(Bitmap bitmap) {
-         super.onPostExecute(bitmap);
-         if (bitmap!=null)
-         imageView.setImageBitmap(bitmap);
-     }
- }
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            if (bitmap != null) {
+                imageView.setImageBitmap(bitmap);
+            }
+        }
+    }
 
     public static void GetPermission(FragmentActivity activity, String[] storage_permission, int i) {
         activity.requestPermissions(storage_permission, 122);
@@ -1495,9 +1492,12 @@ public class MethodClass {
 
 
     public static void updateToken(String token, Application activity, Handler handler) {
-        Data data = new Data("TOKEN", PreferenceFile.getUser().getUser().getId(), token);
-        Sender se = new Sender(data, "/topics/EASY_ALL");
-        MethodClass.SendNotificationOnTopic(se, activity, handler);
+       /* Data data = new Data("TOKEN", PreferenceFile.getUser().getUser().getId(), token);
+        Message message1 = new Message(data, "/topics/EASY_ALL");
+
+        Sender se = new Sender(false, message1);
+        MethodClass.SendNotificationOnTopic(se, activity, handler);*/
+        //todo
     }
 
 
@@ -1864,6 +1864,7 @@ public class MethodClass {
         lottieAlertDialog.setCanceledOnTouchOutside(false);
         lottieAlertDialog.show();
     }
+
     public static String[] storge_permissions = {
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -1875,6 +1876,7 @@ public class MethodClass {
             Manifest.permission.READ_MEDIA_IMAGES,
             Manifest.permission.READ_MEDIA_AUDIO,
             Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.POST_NOTIFICATIONS,
             Manifest.permission.CAMERA
     };
 
@@ -1887,21 +1889,22 @@ public class MethodClass {
         }
         return p;
     }
+
     public static boolean isAllowed(Activity activity) {
         String[] permissions = MethodClass.permissions();
-        List<String>reqper= new ArrayList<>();
+        List<String> reqper = new ArrayList<>();
 
         for (int i = 0; i < permissions.length; i++) {
-            if (   ContextCompat.checkSelfPermission(activity, permissions[i]) != PackageManager.PERMISSION_GRANTED){
+            if (ContextCompat.checkSelfPermission(activity, permissions[i]) != PackageManager.PERMISSION_GRANTED) {
                 reqper.add(permissions[i]);
             }
         }
 
-        if (reqper.size()>0){
-            activity.requestPermissions(reqper.toArray(new String[0]),1890);
+        if (reqper.size() > 0) {
+            activity.requestPermissions(reqper.toArray(new String[0]), 1890);
             return false;
-        }else{
-            return  true;
+        } else {
+            return true;
         }
 
     }

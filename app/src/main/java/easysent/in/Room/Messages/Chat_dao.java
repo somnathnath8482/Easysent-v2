@@ -48,7 +48,7 @@ public interface Chat_dao {
     LiveData<List<Chats>>  getMessageBy_User(String user,String me);
 
     //todo  paging3
-    @Query("SELECT * FROM Chats WHERE (sender =:user AND reciver=:me) OR (sender =:me AND reciver=:user)")
+    @Query("SELECT * FROM Chats WHERE (sender =:user AND reciver=:me) OR (sender =:me AND reciver=:user) order by createdAt ASC ")
     PagingSource<Integer,Chats> getMessageBy_paging(String user, String me);
 
 

@@ -41,6 +41,7 @@ import java.util.HashMap;
 import easysent.in.Activity.Messages.MessageActivity;
 import easysent.in.Adapter.GroupUserAdapter;
 import easysent.in.Firebase.Data;
+import easysent.in.Firebase.Message;
 import easysent.in.Firebase.Sender;
 import easysent.in.Helper.Constants;
 import easysent.in.Helper.CustomProgressbar;
@@ -334,8 +335,10 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
                                 Data data = new Data("RFG", id, "removed from group");
                                 data.setSender(PreferenceFile.getUser().getUser().getId());
+                               // Message message1 = new Message(data, token);
 
-                                Sender se = new Sender(data, token);
+                                Sender se = new Sender(data,token);
+
                                 MethodClass.SendNotificationOnTopic(se, application, handler);
 
                             }

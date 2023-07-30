@@ -15,6 +15,7 @@ import android.app.Application;
 import android.os.Handler;
 
 import easysent.in.Firebase.Data;
+import easysent.in.Firebase.Message;
 import easysent.in.Firebase.Sender;
 import easysent.in.Firebase.SubscribetoTopic;
 import easysent.in.Helper.SharePref.PreferenceFile;
@@ -502,7 +503,9 @@ public class SyncData {
         if (reciver != null && application != null) {
             token = reciver.getToken();
             Data data = new Data("RECIVED", chats.getThread(), "");
-            Sender se = new Sender(data, token);
+            ///Message message1 = new Message(data, token);
+
+            Sender se = new Sender(data,token);
             MethodClass.SendNotification(se, application, handler);
         }
 

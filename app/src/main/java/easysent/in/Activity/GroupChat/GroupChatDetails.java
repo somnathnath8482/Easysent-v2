@@ -72,6 +72,7 @@ import easysent.in.Encription.Encripter;
 import easysent.in.FileHandle.Onselect;
 import easysent.in.FileHandle.PickFile;
 import easysent.in.Firebase.Data;
+import easysent.in.Firebase.Message;
 import easysent.in.Firebase.Sender;
 import easysent.in.Helper.Constants;
 import easysent.in.Helper.CustomProgressbar;
@@ -783,7 +784,9 @@ public class GroupChatDetails extends AppCompatActivity {
         Data data = new Data(type, id, message);
         data.setSender(PreferenceFile.getUser().getUser().getId());
 
-        Sender se = new Sender(data, "/topics/"+id);
+       /// Message message1 = new Message(data, "/topics/"+id);
+
+        Sender se = new Sender(data,"/topics/"+id);
         MethodClass.SendNotificationOnTopic(se, application,handler);
 
     }

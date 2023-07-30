@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "155835995767",
+    "project_id": "easysent-v2",
+    "storage_bucket": "easysent-v2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155835995767:android:ccf887d7ecb343f6e2d872",
+        "android_client_info": {
+          "package_name": "easysent.in"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "155835995767-dmch4889beqc40ufo5fq76sre8qmdi1h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcYNf-VMc8sWijSfLLm4jMPU5i1ZRpRkQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "155835995767-dmch4889beqc40ufo5fq76sre8qmdi1h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155835995767:android:ccf887d7ecb343f6e2d872",
+        "android_client_info": {
+          "package_name": "easysent2.in"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "155835995767-dmch4889beqc40ufo5fq76sre8qmdi1h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcYNf-VMc8sWijSfLLm4jMPU5i1ZRpRkQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "155835995767-dmch4889beqc40ufo5fq76sre8qmdi1h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
